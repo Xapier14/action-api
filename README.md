@@ -34,9 +34,7 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
     |-|-|-|
     | `phoneNumber` | Phone number of the account | Yes |
     | `password` | Plain text password | Yes |
-  - `/reports`
-
-    > Sub-routes require authentication via session token
+  - `/reports` - _requires session token_
 
     - `/create` - POST Method
       | Parameter | Description | Required? |
@@ -68,6 +66,17 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
       | Parameter       | Description             | Required? |
       | --------------- | ----------------------- | --------- |
       | `gpsCoordinate` | GPS Long+Lat Coordinate | Yes       |
+
+  - `/attachments` - _requires session token_
+    - `/{id}` - GET Method
+      | Parameter | Description | Required? |
+      |-|-|-|
+      | `id` | Attachment ID | Yes |
+    - `/upload` - Fetch Method
+      | Parameter | Description | Required? |
+      |-|-|-|
+      | `type` | Attachment type (_Photo_ or _Video_) | Yes |
+      | `data` | Attachment data | Yes |
 
 ## License
 

@@ -61,7 +61,7 @@ mongoose.connect(
     // express.js, server init
     app.listen(port, () => {
       // start command loop
-      console.log(`chirp-api listening on port ${port}`);
+      console.log(`action-api listening on port ${port}`);
       console.log();
       console.log("Type 'exit' to exit");
       readlineInterface.question("> ", readlineCallback);
