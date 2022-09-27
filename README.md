@@ -7,7 +7,7 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
 1. Clone the repository.
    ```
    git clone https://github.com/xapier14/action-api.git
-   cd chirp-api
+   cd action-api
    ```
 1. Install the required dependencies.
    ```
