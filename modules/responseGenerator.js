@@ -73,3 +73,11 @@ export function signupSuccess(res, token) {
     token: token,
   });
 }
+export function attachmentFetchSuccess(res, token, base64) {
+  res.send({
+    status: "Attachment fetch successful.",
+    base64: base64 ?? "",
+    e: 0,
+    token: token,
+  })
+}

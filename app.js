@@ -2,6 +2,7 @@ import express, { json } from "express";
 import mongoose from "mongoose";
 import bodyparser from "body-parser";
 import readline from "readline";
+import path from "path";
 import { revokeAllCreatedSessions } from "./modules/tokens.js";
 import "dotenv/config";
 const app = express();
