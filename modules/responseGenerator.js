@@ -47,6 +47,18 @@ export function tooManyRequests(res) {
     e: 8,
   });
 }
+export function invalidFileupload(res) {
+  res.status(400).send({
+    status: "Invalid file upload.",
+    e: 9,
+  });
+}
+export function attachmentNotFound(res) {
+  res.status(404).send({
+    status: "Attachment not found.",
+    e: 10,
+  });
+}
 
 // server errors
 export function databaseError(req, res, err) {
@@ -73,11 +85,17 @@ export function signupSuccess(res, token) {
     token: token,
   });
 }
-export function attachmentFetchSuccess(res, token, base64) {
+export function attachmentUploadSuccess(
+  res,
+  token,
+  attachmentId,
+  attachmentType
+) {
   res.send({
-    status: "Attachment fetch successful.",
-    base64: base64 ?? "",
+    status: "Attachment upload successful.",
+    attachmentId: attachmentId,
+    attachmentType: attachmentType,
     e: 0,
     token: token,
-  })
+  });
 }

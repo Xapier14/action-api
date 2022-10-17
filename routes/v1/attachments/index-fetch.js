@@ -1,4 +1,5 @@
 import { Router } from "express";
+import fs from "fs";
 
 // middlewares
 import { fields } from "../../../middlewares/required.js";
@@ -6,7 +7,7 @@ import { fields } from "../../../middlewares/required.js";
 // modules
 import {
   unauthorized,
-  attachmentFetchSuccess,
+  attachmentNotFound,
 } from "../../../modules/responseGenerator.js";
 
 // models
@@ -23,17 +24,21 @@ router.get("/:id", (req, res) => {
   const id = req.params.id;
   const token = req.headers.authorization;
   // get attachment
-  AttachmentSchema.findOne({ id: id }, (err, _) => {
-    if (err) {
-      unauthorized(res);
+  AttachmentSchema.findOne({ mediaId: id }, (err, attachment) => {
+    if (err || attachment === null) {
+      attachmentNotFound(res);
       return;
     }
-    const base64 = getBase64FromAttachmentId(id);
-    if (base64 == null) {
-      unauthorized(res);
-      return;
+    const filePath = "attachments/" + id + "." + attachment.mediaExtension;
+    if (!fs.existsSync(filePath)) {
+      attachmentNotFound(res);
+    } else {
+      // open file
+      const file = fs.readFileSync(filePath);
+      // send to res
+      res.write(file);
+      res.end();
     }
-    attachmentFetchSuccess(res, token, base64);
   });
 });
 

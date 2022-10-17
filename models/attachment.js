@@ -8,6 +8,14 @@ const AttachmentSchema = new Schema({
     type: String,
     required: true,
   },
+  mediaType: {
+    type: String,
+    required: true,
+  },
+  mediaExtension: {
+    type: String,
+    required: true,
+  },
   uploadedAt: {
     type: Date,
     default: Date.now,

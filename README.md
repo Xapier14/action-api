@@ -18,6 +18,20 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
    npm run start
    ```
 
+## Progress
+
+- [x] Accounts
+  - [x] Create account
+  - [x] Login
+- [ ] Reports
+  - [ ] Create report
+  - [ ] View single report
+  - [ ] View all and filter reports
+- [ ] Attachments
+  - [x] Upload attachment
+  - [x] Retrieve attachment
+  - [ ] Retrieve all by report id
+
 ## Routes
 
 - `/` - static files
@@ -75,8 +89,7 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
     - `/upload` - Fetch Method
       | Parameter | Description | Required? |
       |-|-|-|
-      | `type` | Attachment type (_Photo_ or _Video_) | Yes |
-      | `data` | Attachment data | Yes |
+      | `file` | Attachment data | Yes |
 
 ## License
 
