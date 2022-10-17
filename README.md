@@ -86,7 +86,7 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
       | Parameter | Description | Required? |
       |-|-|-|
       | `id` | Attachment ID | Yes |
-    - `/upload` - Fetch Method
+    - `/upload` - POST Method
       | Parameter | Description | Required? |
       |-|-|-|
       | `file` | Attachment data | Yes |
