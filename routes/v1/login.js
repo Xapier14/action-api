@@ -28,26 +28,23 @@ import { createSession } from "../../modules/tokens.js";
 
 // models
 import UserSchema from "../../models/user.js";
+import { normalizePhoneNumber } from "../../modules/format.js";
 
 const router = Router();
 
 router.use(fields(["phoneNumber", "password"]));
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   // get phoneNumber and password fields
-  const phoneNumber = req.body.phoneNumber;
+  const phoneNumber = normalizePhoneNumber(req.body.phoneNumber);
   const password = req.body.password;
 
-  UserSchema.findOne({ phoneNumber: phoneNumber }, (err, user) => {
-    // database error
-    if (err) {
-      databaseError(req, res, err);
-      return;
-    }
+  try {
+    const user = await UserSchema.findOne({ phoneNumber: phoneNumber });
 
     // no phoneNumber OR password doesn't match
     if (
       user === null ||
-      bcrypt.hashSync(password, user.salt) !== user.password
+      (await bcrypt.hash(password, user.salt)) !== user.password
     ) {
       badLogin(res);
       return;
@@ -71,10 +68,9 @@ router.post("/", (req, res) => {
       return;
     }
     loginSuccess(res, token);
-    // const jwtToken = createToken(phoneNumber, accessLevel, user.id);
-    // const eat = jwt.decode(jwtToken).eat;
-    // loginSuccess(res, jwtToken, eat);
-  });
+  } catch (err) {
+    databaseError(req, res, err);
+  }
 });
 
 export default router;

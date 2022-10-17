@@ -15,12 +15,13 @@ import UserSchema from "../../../models/user.js";
 
 const router = Router();
 
-router.post("/", uploadSingle("file"), (req, res) => {
+router.post("/", uploadSingle("file"), async (req, res) => {
   const token = req.headers.authorization;
 
   // get user from token
-  UserSchema.findOne({ token: token }, (err, user) => {
-    if (err) {
+  try {
+    const user = await UserSchema.findOne({ token: token });
+    if (user === null) {
       databaseError(req, res, err);
       return;
     }
@@ -39,23 +40,22 @@ router.post("/", uploadSingle("file"), (req, res) => {
     readStream.pipe(writeStream);
 
     // create attachment object in database
-    AttachmentSchema.create(
-      {
-        uploader: userId,
-        mediaId: id,
-        mediaType: type,
-        mediaExtension: extension,
-      },
-      (err, _) => {
-        if (err) {
-          databaseError(req, res, err);
-          console.log(err);
-          return;
-        }
-        attachmentUploadSuccess(res, token, id);
-      }
-    );
-  });
+    const attachment = await AttachmentSchema.create({
+      uploader: userId,
+      mediaId: id,
+      mediaType: type,
+      mediaExtension: extension,
+    });
+    if (attachment === null) {
+      databaseError(req, res, err);
+      console.log(err);
+      return;
+    }
+    attachmentUploadSuccess(res, token, id);
+  } catch (err) {
+    databaseError(req, res, err);
+    console.log(err);
+  }
 });
 
 export default router;

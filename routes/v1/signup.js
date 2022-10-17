@@ -40,7 +40,7 @@ import UserSchema from "../../models/user.js";
 const router = Router();
 
 router.use(fields(["phoneNumber", "password"]));
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   const phoneNumber = normalizePhoneNumber(req.body.phoneNumber);
   const password = req.body.password;
 
@@ -51,12 +51,8 @@ router.post("/", (req, res) => {
   }
 
   // check if phoneNumber is not in use
-  UserSchema.findOne({ phoneNumber: phoneNumber }, (err, user) => {
-    if (err) {
-      // database returned error
-      databaseError(req, res, err);
-      return;
-    }
+  try {
+    const user = await UserSchema.findOne({ phoneNumber: phoneNumber });
     if (user === null) {
       // check if password is weak
       // password must have at least 8 characters
@@ -76,30 +72,23 @@ router.post("/", (req, res) => {
       const hash = bcrypt.hashSync(password, salt);
 
       // create new user
-      UserSchema.create(
-        {
-          phoneNumber: phoneNumber,
-          salt: salt,
-          password: hash,
-          maxAccessLevel: 0,
-        },
-        (err, newUser) => {
-          // database error
-          if (err) {
-            databaseError(req, res, err);
-            return;
-          }
-          // create jwt token
-          const sessionToken = createSession(newUser.id, 0);
-          signupSuccess(res, sessionToken);
-        }
-      );
+      const newUser = await UserSchema.create({
+        phoneNumber: phoneNumber,
+        salt: salt,
+        password: hash,
+        maxAccessLevel: 0,
+      });
+      // create jwt token
+      const sessionToken = createSession(newUser.id, 0);
+      signupSuccess(res, sessionToken);
     } else {
       // phoneNumber is in use
       phoneNumberInUse(res);
     }
-    return;
-  });
+  } catch (err) {
+    databaseError(req, res, err);
+  }
+  return;
 });
 
 export default router;

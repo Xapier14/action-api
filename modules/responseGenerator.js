@@ -69,6 +69,14 @@ export function databaseError(req, res, err) {
     e: -1,
   });
 }
+export function internalFileReadError(req, res, err) {
+  console.log("File read error: " + err);
+  console.log("from " + req.originalUrl);
+  res.status(500).send({
+    status: "Internal server error.",
+    e: -2,
+  });
+}
 
 // success responses
 export function loginSuccess(res, token) {

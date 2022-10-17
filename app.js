@@ -37,6 +37,12 @@ const readlineCallback = function (line) {
         console.log("Revoking all sessions...");
         revokeAllCreatedSessions();
         break;
+      case "deleteAttachments":
+        console.log("Deleting all attachments...");
+        break;
+      case "clearUploadCache":
+        console.log("Clearing upload cache...");
+        break;
       default:
         console.log("Unknown command");
         break;

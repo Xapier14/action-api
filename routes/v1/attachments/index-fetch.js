@@ -1,45 +1,47 @@
 import { Router } from "express";
 import fs from "fs";
-
-// middlewares
-import { fields } from "../../../middlewares/required.js";
+import util from "util";
 
 // modules
 import {
   unauthorized,
   attachmentNotFound,
+  internalFileReadError,
 } from "../../../modules/responseGenerator.js";
 
 // models
 import AttachmentSchema from "../../../models/attachment.js";
-import { getBase64FromAttachmentId } from "../../../modules/attachment.js";
 
 const router = Router();
+const readFile = util.promisify(fs.readFile);
 
 router.get("/", (req, res) => {
   unauthorized(res);
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", async (req, res) => {
   const id = req.params.id;
   const token = req.headers.authorization;
   // get attachment
-  AttachmentSchema.findOne({ mediaId: id }, (err, attachment) => {
-    if (err || attachment === null) {
-      attachmentNotFound(res);
+  const attachment = await AttachmentSchema.findOne({ mediaId: id });
+  if (attachment === null) {
+    attachmentNotFound(res);
+    return;
+  }
+  const filePath = "attachments/" + id + "." + attachment.mediaExtension;
+  if (!fs.existsSync(filePath)) {
+    attachmentNotFound(res);
+  } else {
+    // open file
+    const file = await readFile(filePath);
+    if (file === null) {
+      internalFileReadError(req, res, err);
       return;
     }
-    const filePath = "attachments/" + id + "." + attachment.mediaExtension;
-    if (!fs.existsSync(filePath)) {
-      attachmentNotFound(res);
-    } else {
-      // open file
-      const file = fs.readFileSync(filePath);
-      // send to res
-      res.write(file);
-      res.end();
-    }
-  });
+    // send file
+    res.write(file);
+    res.end();
+  }
 });
 
 export default router;
