@@ -12,3 +12,16 @@ export function getBase64FromAttachmentId(attachmentId, extension) {
   const base64 = file.toString("base64");
   return base64;
 }
+
+export function clearLocalCache() {
+  const directory = "localUploadCache";
+  fs.readdir(directory, (err, files) => {
+    if (err) throw err;
+
+    for (const file of files) {
+      fs.unlink(path.join(directory, file), (err) => {
+        if (err) throw err;
+      });
+    }
+  });
+}

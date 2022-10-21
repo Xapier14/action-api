@@ -4,6 +4,7 @@ import bodyparser from "body-parser";
 import readline from "readline";
 import path from "path";
 import { revokeAllCreatedSessions } from "./modules/tokens.js";
+import { clearLocalCache } from "./modules/attachment.js";
 import "dotenv/config";
 const app = express();
 
@@ -42,6 +43,7 @@ const readlineCallback = function (line) {
         break;
       case "clearUploadCache":
         console.log("Clearing upload cache...");
+        clearLocalCache();
         break;
       default:
         console.log("Unknown command");
