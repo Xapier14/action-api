@@ -53,11 +53,29 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
     - `/create` - POST Method
       | Parameter | Description | Required? |
       |-|-|-|
-      | `title` | Report title | Yes |
-      | `type` | Type/Classification of report | Yes |
-      | `description` | Report description | No |
-      | `location` | GPS/IP Location | Yes |
-      | `locationType` | Type of location data | Yes |
+      | `inspectorId` | Account ID of report creator | Yes |
+      | `inspectedDateTime` | DateTime of report | Yes |
+      | `location` | Location | No |
+      | `buildingId` | Building ID in campus defined by `location` | Yes |
+      | `collapsedStructure` | Evaluation severity number-based enum | Yes |
+      | `leaningOrOutOfPlumb` | Evaluation severity number-based enum | No |
+      | `damageToPrimaryStructure` | Evaluation severity number-based enum | No |
+      | `fallingHazards` | Evaluation severity number-based enum | No |
+      | `groundMovementOrSlope` | Evaluation severity number-based enum | No |
+      | `damagedSubmergedFixtures` | Evaluation severity number-based enum | No |
+      | `proximityRiskTitle` | Other hazard in close-proximity | No |
+      | `proximityRisk` | Evaluation severity number-based enum | No |
+      | `evaluationComment` | Additional evaluation comment | No |
+      | `estimatedBuildingDamage` | Building damage number-based enum | No |
+      | `inspectedPlacard` | Number-based boolean `0/1` | No |
+      | `restrictedPlacard` | Number-based boolean `0/1` | No |
+      | `unsafePlacard` | Number-based boolean `0/1` | No |
+      | `barricadeNeeded` | Number-based boolean `0/1` | No |
+      | `barricadeComment` | Additional comment on barricade | No |
+      | `detailedEvaluationNeeded` | Number-based boolean `0/1` | No |
+      | `detailedEvaluationAreas` | Comma separated list of areas | No |
+      | `otherRecommendations` | Additional recommendations | No |
+      | `furtherComments` | Overall comments on report | No |
       | `attachments` | Comma separated list of attachment IDs | No |
     - `/list` - GET Method
       | Parameter | Description | Required? |
@@ -72,14 +90,6 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
       | Parameter  | Description          | Required? |
       | ---------- | -------------------- | --------- |
       | `reportId` | The id of the report | Yes       |
-
-    - `/heatmap` - GET Method
-
-      > Requires a valid **API** key.
-
-      | Parameter       | Description             | Required? |
-      | --------------- | ----------------------- | --------- |
-      | `gpsCoordinate` | GPS Long+Lat Coordinate | Yes       |
 
   - `/attachments` - _requires session token_
     - `/{id}` - GET Method
