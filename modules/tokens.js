@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import SessionSchema from "../models/session.js";
+import UserSchema from "../models/user.js";
 
 const TOKEN_EXPIRATION = 60 * 60 * 24 * 7 * 1000; // 1 week
 
@@ -42,4 +43,12 @@ export function verifyJwt(token) {
   } catch (err) {
     return false;
   }
+}
+
+export async function getLocationFromToken(token) {
+  const session = await SessionSchema.findOne({ token: token }).exec();
+  if (session === null) return null;
+  const user = await UserSchema.findOne({ _id: session.userId }).exec();
+  if (user === null) return null;
+  return user.location;
 }

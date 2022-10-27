@@ -102,6 +102,14 @@ const IncidentSchema = new Schema({
     type: Array,
     default: [],
   },
+  resolved: {
+    type: Boolean,
+    default: false,
+  },
+  severityStatus: {
+    type: Number,
+    default: 0,
+  },
 });
 
 export default model("Incident", IncidentSchema);

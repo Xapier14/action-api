@@ -130,11 +130,19 @@ export function incidentReportSuccess(res, token, incidentId) {
     token: token,
   });
 }
-export function sendListOfReports(res, token, reports, pageOffset, limit) {
+export function sendListOfReports(
+  res,
+  token,
+  reports,
+  pageOffset,
+  maxPageOffset,
+  limit
+) {
   res.send({
-    status: `Retrieved page ${pageOffset} with ${reports.length}/${limit} reports.`,
+    status: `Retrieved page ${pageOffset} of ${maxPageOffset} with ${reports.length} report(s).`,
     e: 0,
     pageOffset: pageOffset,
+    maxPageOffset: maxPageOffset,
     limit: limit,
     reports: reports,
     reportCount: reports.length,

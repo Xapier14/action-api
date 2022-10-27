@@ -38,12 +38,12 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
    On the first run, a default admin user will be created with the following credentials:
    ```
    email: admin@g.batstate-u.edu.ph
-   password: admin
+   password: Admin123
    ```
    This account holds an access level of `1`.
    Login to the API using the credentials above via the `/api/v1/login` endpoint.
    ```
-   curl -X POST -H "Content-Type: application/json" -d '{"email": admin@g.batstate-u.edu.ph, "password": admin}' http://localhost:80/api/v1/login
+   curl -X POST -H "Content-Type: application/json" -d '{"email": admin@g.batstate-u.edu.ph, "password": Admin123}' http://localhost:80/api/v1/login
    ```
    You can then use the returned `accessToken` to access the other endpoints.
 1. Create other accounts via the `/api/v1/signup` endpoint.
@@ -53,6 +53,7 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
    ```
    Supply a `maxAccessLevel` parameter to limit the maximum access level of the new user.
    If not supplied, the new user will have an access level of `0`.
+1. Change the password of the admin account to something more secure.
 
 ## Progress
 
@@ -83,11 +84,14 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
 
     > Requires `accessLevel >= 1`
 
-    | Parameter        | Description                         | Required?           |
-    | ---------------- | ----------------------------------- | ------------------- |
-    | `email`          | Email of the account                | Yes                 |
-    | `password`       | Plain text password                 | Yes                 |
-    | `maxAccessLevel` | Max access level of the new account | No, defaults to `0` |
+    | Parameter        | Description                             | Required?           |
+    | ---------------- | --------------------------------------- | ------------------- |
+    | `email`          | Email of the account                    | Yes                 |
+    | `password`       | Plain text password                     | Yes                 |
+    | `firstName`      | First name of the user                  | Yes                 |
+    | `firstName`      | First name of the user                  | Yes                 |
+    | `location`       | Campus/Location designation of the user | Yes                 |
+    | `maxAccessLevel` | Max access level of the new account     | No, defaults to `0` |
 
   - `/reports` - _requires session token_
 
@@ -120,9 +124,13 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
     - `/list` - GET Method
       | Parameter | Description | Required? |
       |-|-|-|
-      | `type` | Filter by report type/classification | No |
-      | `gpsCoordinate` | GPS Long+Lat Coordinate | No (Yes if using `gpsRange`) |
-      | `gpsRadius` | Radius of reports to fetch from GPS location in meters | No |
+      | `location` | Filter by report location | No (filter is only usable if used with `accessLevel >= 1`) |
+      | `buildingId` | Building ID of report | No (Yes if using `location`) |
+      | `severityStatus` | General severity status | No |
+      | `inspectorId` | Filter by inspector | No |
+      | `resolved` | Filter by resolved status | No |
+      | `pageOffset` | Zero-based page offset | No |
+      | `limit` | Limit results for pagination | No |
     - `/delete` - POST Method
 
       > Requires `accessLevel >= 1`

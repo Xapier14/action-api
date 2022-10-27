@@ -40,11 +40,14 @@ import UserSchema from "../../models/user.js";
 
 const router = Router();
 
-router.use(fields(["email", "password"]));
+router.use(fields(["email", "password", "firstName", "lastName", "location"]));
 router.use(mustBeAccessLevel(1));
 router.post("/", async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  const firstName = req.body.firstName;
+  const lastName = req.body.lastName;
+  const location = req.body.location;
   const maxAccessLevel = Math.max(req.body.maxAccessLevel ?? 0, 0);
 
   // check if email is invalid
@@ -77,6 +80,9 @@ router.post("/", async (req, res) => {
       const newUser = await UserSchema.create({
         email: email,
         password: hash,
+        firstName: firstName,
+        lastName: lastName,
+        location: location,
         maxAccessLevel: maxAccessLevel,
       });
       // create jwt token

@@ -2,10 +2,11 @@ import express, { json } from "express";
 import mongoose from "mongoose";
 import bodyparser from "body-parser";
 import readline from "readline";
-import path from "path";
+import bcrypt from "bcrypt";
 import { revokeAllCreatedSessions } from "./modules/tokens.js";
 import { clearLocalCache } from "./modules/attachment.js";
 import "dotenv/config";
+import UserSchama from "./models/user.js";
 const app = express();
 
 // import routes
@@ -66,6 +67,32 @@ mongoose.connect(
       return;
     }
     console.log("Connected to DB");
+
+    // check if admin account exists
+    UserSchama.findOne({ email: "admin@g.batstate-u.edu.ph" }, (err, user) => {
+      if (err) {
+        console.log("Error checking for admin account");
+        console.log(err);
+        return;
+      }
+      if (user === null) {
+        const admin = new UserSchama({
+          email: "admin@g.batstate-u.edu.ph",
+          password: bcrypt.hashSync("Admin123", 10),
+          maxAccessLevel: 1,
+          firstName: "Admin",
+          lastName: "Account",
+          location: "HQ",
+        });
+        admin.save((err) => {
+          if (err) {
+            console.log("Error creating admin account");
+            console.log(err);
+            return;
+          }
+        });
+      }
+    });
 
     // express.js, server init
     app.listen(port, () => {

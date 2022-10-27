@@ -17,6 +17,15 @@ router.post("/", async (req, res) => {
     const session = await SessionSchema.findOne({
       token: req.headers.authorization,
     });
+    const severityStatus = Math.max(
+      req.body.collapsedStructure ?? 0,
+      req.body.leaningOrOutOfPlumb ?? 0,
+      req.body.damageToPrimaryStructure ?? 0,
+      req.body.fallingHazards ?? 0,
+      req.body.groundMovementOrSlope ?? 0,
+      req.body.damagedSubmergedFixtures ?? 0,
+      req.body.proximityRisk ?? 0
+    );
     const incident = await IncidentSchema.create({
       inspectorId: session.userId,
       inspectedDateTime: req.body.inspectedDateTime,
@@ -42,6 +51,7 @@ router.post("/", async (req, res) => {
       otherRecommendations: req.body.otherRecommendations,
       furtherComments: req.body.furtherComments,
       attachments: req.body.attachments,
+      severityStatus: severityStatus,
     });
     incidentReportSuccess(res, req.headers.authorization, incident._id);
   } catch (err) {
