@@ -41,10 +41,7 @@ router.post("/", async (req, res) => {
     const user = await UserSchema.findOne({ email: email });
 
     // no email OR password doesn't match
-    if (
-      user === null ||
-      (await bcrypt.hash(password, user.salt)) !== user.password
-    ) {
+    if (user === null || !(await bcrypt.compare(password, user.password))) {
       badLogin(res);
       return;
     }

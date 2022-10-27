@@ -8,7 +8,7 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
    - [Git](https://git-scm.com/)
    - [Node.js](https://nodejs.org/en/)
    - [MongoDB](https://www.mongodb.com/)
-   - [Curl](https://curl.haxx.se/)
+   - [Curl](https://curl.haxx.se/), [Postman](https://www.getpostman.com/), [Insomnia](https://insomnia.rest/), or other REST clients.
 1. Clone the repository.
    ```
    git clone https://github.com/xapier14/action-api.git
@@ -83,10 +83,11 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
 
     > Requires `accessLevel >= 1`
 
-    | Parameter  | Description          | Required? |
-    | ---------- | -------------------- | --------- |
-    | `email`    | Email of the account | Yes       |
-    | `password` | Plain text password  | Yes       |
+    | Parameter        | Description                         | Required?           |
+    | ---------------- | ----------------------------------- | ------------------- |
+    | `email`          | Email of the account                | Yes                 |
+    | `password`       | Plain text password                 | Yes                 |
+    | `maxAccessLevel` | Max access level of the new account | No, defaults to `0` |
 
   - `/reports` - _requires session token_
 

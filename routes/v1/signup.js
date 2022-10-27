@@ -45,7 +45,7 @@ router.use(mustBeAccessLevel(1));
 router.post("/", async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const maxAccessLevel = Mat.max(req.body.maxAccessLevel ?? 0, 0);
+  const maxAccessLevel = Math.max(req.body.maxAccessLevel ?? 0, 0);
 
   // check if email is invalid
   if (email === null) {
@@ -71,13 +71,11 @@ router.post("/", async (req, res) => {
       }
 
       // create salt and hash
-      const salt = bcrypt.genSaltSync(10);
-      const hash = bcrypt.hashSync(password, salt);
+      const hash = bcrypt.hashSync(password, 10);
 
       // create new user
       const newUser = await UserSchema.create({
         email: email,
-        salt: salt,
         password: hash,
         maxAccessLevel: maxAccessLevel,
       });

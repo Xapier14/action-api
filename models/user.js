@@ -8,10 +8,6 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  salt: {
-    type: String,
-    required: true,
-  },
   maxAccessLevel: {
     type: Number,
     default: 0,
