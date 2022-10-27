@@ -28,20 +28,19 @@ import { createSession } from "../../modules/tokens.js";
 
 // models
 import UserSchema from "../../models/user.js";
-import { normalizePhoneNumber } from "../../modules/format.js";
 
 const router = Router();
 
-router.use(fields(["phoneNumber", "password"]));
+router.use(fields(["email", "password"]));
 router.post("/", async (req, res) => {
-  // get phoneNumber and password fields
-  const phoneNumber = normalizePhoneNumber(req.body.phoneNumber);
+  // get email and password fields
+  const email = req.body.email;
   const password = req.body.password;
 
   try {
-    const user = await UserSchema.findOne({ phoneNumber: phoneNumber });
+    const user = await UserSchema.findOne({ email: email });
 
-    // no phoneNumber OR password doesn't match
+    // no email OR password doesn't match
     if (
       user === null ||
       (await bcrypt.hash(password, user.salt)) !== user.password

@@ -4,6 +4,11 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
 
 ## Getting Started
 
+1. Make sure you have the following prerequisites installed:
+   - [Git](https://git-scm.com/)
+   - [Node.js](https://nodejs.org/en/)
+   - [MongoDB](https://www.mongodb.com/)
+   - [Curl](https://curl.haxx.se/)
 1. Clone the repository.
    ```
    git clone https://github.com/xapier14/action-api.git
@@ -13,10 +18,41 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
    ```
    npm install
    ```
+1. Create the environment file.
+   ```
+   cp .env.example .env
+   ```
+   > **NOTE:** You will need to update the `.env` file with your own values.
+   > The environment file should look something like this:
+   ```
+   DB_CONNECTION=mongodb://<hostname>:27017/action-api
+   PORT=80
+   JWT_SECRT=some-secret-passphrase
+   ```
+   _If you are using MongoDB Atlas, just paste the connection string from your dashboard._
 1. Run the `start` script.
    ```
    npm run start
    ```
+1. You should now be able to access the API at `http://localhost:80`.
+   On the first run, a default admin user will be created with the following credentials:
+   ```
+   email: admin@g.batstate-u.edu.ph
+   password: admin
+   ```
+   This account holds an access level of `1`.
+   Login to the API using the credentials above via the `/api/v1/login` endpoint.
+   ```
+   curl -X POST -H "Content-Type: application/json" -d '{"email": admin@g.batstate-u.edu.ph, "password": admin}' http://localhost:80/api/v1/login
+   ```
+   You can then use the returned `accessToken` to access the other endpoints.
+1. Create other accounts via the `/api/v1/signup` endpoint.
+   This requires an `accessToken` with an `accessLevel` of `1` or higher.
+   ```
+   curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer <accessToken>" -d '{"email": <email-of-new-user>, "password": <password-of-new-user>}' http://localhost:80/api/v1/signup
+   ```
+   Supply a `maxAccessLevel` parameter to limit the maximum access level of the new user.
+   If not supplied, the new user will have an access level of `0`.
 
 ## Progress
 
@@ -24,7 +60,7 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
   - [x] Create account
   - [x] Login
 - [ ] Reports
-  - [ ] Create report
+  - [x] Create report
   - [ ] View single report
   - [ ] View all and filter reports
 - [ ] Attachments
@@ -40,33 +76,36 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
   - `/login` - POST Method
     | Parameter | Description | Required? |
     |-|-|-|
-    | `phoneNumber` | Phone number of the account | Yes |
+    | `email` | Email of the account | Yes |
     | `password` | Plain text password | Yes |
     | `accessLevel` | Requested access level for the session | No, defaults to `0` |
   - `/signup` - POST Method
-    | Parameter | Description | Required? |
-    |-|-|-|
-    | `phoneNumber` | Phone number of the account | Yes |
-    | `password` | Plain text password | Yes |
+
+    > Requires `accessLevel >= 1`
+
+    | Parameter  | Description          | Required? |
+    | ---------- | -------------------- | --------- |
+    | `email`    | Email of the account | Yes       |
+    | `password` | Plain text password  | Yes       |
+
   - `/reports` - _requires session token_
 
     - `/create` - POST Method
       | Parameter | Description | Required? |
       |-|-|-|
-      | `inspectorId` | Account ID of report creator | Yes |
       | `inspectedDateTime` | DateTime of report | Yes |
-      | `location` | Location | No |
+      | `location` | Location | Yes |
       | `buildingId` | Building ID in campus defined by `location` | Yes |
       | `collapsedStructure` | Evaluation severity number-based enum | Yes |
-      | `leaningOrOutOfPlumb` | Evaluation severity number-based enum | No |
-      | `damageToPrimaryStructure` | Evaluation severity number-based enum | No |
-      | `fallingHazards` | Evaluation severity number-based enum | No |
-      | `groundMovementOrSlope` | Evaluation severity number-based enum | No |
-      | `damagedSubmergedFixtures` | Evaluation severity number-based enum | No |
+      | `leaningOrOutOfPlumb` | Evaluation severity number-based enum | Yes |
+      | `damageToPrimaryStructure` | Evaluation severity number-based enum | Yes |
+      | `fallingHazards` | Evaluation severity number-based enum | Yes |
+      | `groundMovementOrSlope` | Evaluation severity number-based enum | Yes |
+      | `damagedSubmergedFixtures` | Evaluation severity number-based enum | Yes |
       | `proximityRiskTitle` | Other hazard in close-proximity | No |
       | `proximityRisk` | Evaluation severity number-based enum | No |
       | `evaluationComment` | Additional evaluation comment | No |
-      | `estimatedBuildingDamage` | Building damage number-based enum | No |
+      | `estimatedBuildingDamage` | Building damage number-based enum | Yes |
       | `inspectedPlacard` | Number-based boolean `0/1` | No |
       | `restrictedPlacard` | Number-based boolean `0/1` | No |
       | `unsafePlacard` | Number-based boolean `0/1` | No |

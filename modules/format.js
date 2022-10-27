@@ -7,7 +7,6 @@ export function normalizePhoneNumber(phoneNumber) {
 
 export function getRequiredFieldsForReport() {
   return [
-    "inspectorId",
     "inspectedDateTime",
     "location",
     "buildingId",

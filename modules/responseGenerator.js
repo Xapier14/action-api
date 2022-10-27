@@ -1,19 +1,19 @@
 // client errors
 export function badLogin(res) {
   res.status(400).send({
-    status: "Invalid username or password.",
+    status: "Invalid email or password.",
     e: 1,
   });
 }
-export function badPhoneNumber(res) {
+export function badEmail(res) {
   res.status(400).send({
-    status: "Invalid phone number.",
+    status: "Invalid email.",
     e: 2,
   });
 }
-export function phoneNumberInUse(res) {
+export function emailInUse(res) {
   res.status(400).send({
-    status: "Phone number is already in use.",
+    status: "Email is already in use.",
     e: 3,
   });
 }
@@ -84,6 +84,14 @@ export function internalFileReadError(req, res, err) {
     e: -2,
   });
 }
+export function generalInternalError(req, res) {
+  console.log("General internal error.");
+  console.log("from " + req.originalUrl);
+  res.status(500).send({
+    status: "Internal server error.",
+    e: -3,
+  });
+}
 
 // success responses
 export function loginSuccess(res, token) {
@@ -119,6 +127,17 @@ export function incidentReportSuccess(res, token, incidentId) {
     status: "Incident report successful.",
     e: 0,
     incidentId: incidentId,
+    token: token,
+  });
+}
+export function sendListOfReports(res, token, reports, pageOffset, limit) {
+  res.send({
+    status: `Retrieved page ${pageOffset} with ${reports.length}/${limit} reports.`,
+    e: 0,
+    pageOffset: pageOffset,
+    limit: limit,
+    reports: reports,
+    reportCount: reports.length,
     token: token,
   });
 }

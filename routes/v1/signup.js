@@ -1,18 +1,19 @@
 /*
  * POST /signup
- *   required fields: phoneNumber, password
+ *   required fields: email, password
+ *   required access level: 1
  *   constraints:
- *    - phoneNumber must be a valid PH phone number in the format 09XXXXXXXXX or +639XXXXXXXXX
+ *    - email must be a valid email
  *    - password must be at least 8 characters long;
  *       contain at least one uppercase letter;
  *       one lowercase letter;
  *       and one number
- *    - phoneNumber must not be in use
+ *    - email must not be in use
  *   response:
  *    - 200: signup successful (e: 0)
- *    - 400: bad phoneNumber (e: 2)
+ *    - 400: bad email (e: 2)
  *    - 400: weak password (e: 4)
- *    - 400: phoneNumber in use (e: 3)
+ *    - 400: email in use (e: 3)
  *    - 500: database error (e: -1)
  */
 
@@ -22,37 +23,39 @@ import bcrypt from "bcrypt";
 
 // middlewares
 import { fields } from "../../middlewares/required.js";
+import { mustBeAccessLevel } from "../../middlewares/authorization.js";
 
 // modules
 import {
-  badPhoneNumber,
+  badEmail,
   databaseError,
   weakPassword,
   signupSuccess,
-  phoneNumberInUse,
+  emailInUse,
 } from "../../modules/responseGenerator.js";
 import { createSession } from "../../modules/tokens.js";
-import { normalizePhoneNumber } from "../../modules/format.js";
 
 // models
 import UserSchema from "../../models/user.js";
 
 const router = Router();
 
-router.use(fields(["phoneNumber", "password"]));
+router.use(fields(["email", "password"]));
+router.use(mustBeAccessLevel(1));
 router.post("/", async (req, res) => {
-  const phoneNumber = normalizePhoneNumber(req.body.phoneNumber);
+  const email = req.body.email;
   const password = req.body.password;
+  const maxAccessLevel = Mat.max(req.body.maxAccessLevel ?? 0, 0);
 
-  // check if phoneNumber is invalid
-  if (phoneNumber === null) {
-    badPhoneNumber(res);
+  // check if email is invalid
+  if (email === null) {
+    badEmail(res);
     return;
   }
 
-  // check if phoneNumber is not in use
+  // check if email is not in use
   try {
-    const user = await UserSchema.findOne({ phoneNumber: phoneNumber });
+    const user = await UserSchema.findOne({ email: email });
     if (user === null) {
       // check if password is weak
       // password must have at least 8 characters
@@ -73,17 +76,17 @@ router.post("/", async (req, res) => {
 
       // create new user
       const newUser = await UserSchema.create({
-        phoneNumber: phoneNumber,
+        email: email,
         salt: salt,
         password: hash,
-        maxAccessLevel: 0,
+        maxAccessLevel: maxAccessLevel,
       });
       // create jwt token
       const sessionToken = createSession(newUser.id, 0);
       signupSuccess(res, sessionToken);
     } else {
-      // phoneNumber is in use
-      phoneNumberInUse(res);
+      // email is in use
+      emailInUse(res);
     }
   } catch (err) {
     databaseError(req, res, err);
