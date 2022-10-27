@@ -59,6 +59,13 @@ export function attachmentNotFound(res) {
     e: 10,
   });
 }
+export function missingFields(res, fields) {
+  res.status(400).send({
+    status: "Missing required field(s).",
+    e: 11,
+    fields: fields,
+  });
+}
 
 // server errors
 export function databaseError(req, res, err) {
@@ -101,9 +108,17 @@ export function attachmentUploadSuccess(
 ) {
   res.send({
     status: "Attachment upload successful.",
+    e: 0,
     attachmentId: attachmentId,
     attachmentType: attachmentType,
+    token: token,
+  });
+}
+export function incidentReportSuccess(res, token, incidentId) {
+  res.send({
+    status: "Incident report successful.",
     e: 0,
+    incidentId: incidentId,
     token: token,
   });
 }

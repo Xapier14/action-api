@@ -4,3 +4,19 @@ export function normalizePhoneNumber(phoneNumber) {
   if (phonePart === null) return null;
   return "+63" + phonePart[1];
 }
+
+export function getRequiredFieldsForReport() {
+  return [
+    "inspectorId",
+    "inspectedDateTime",
+    "location",
+    "buildingId",
+    "collapsedStructure",
+    "leaningOrOutOfPlumb",
+    "damageToPrimaryStructure",
+    "fallingHazards",
+    "groundMovementOrSlope",
+    "damagedSubmergedFixtures",
+    "estimatedBuildingDamage",
+  ];
+}
