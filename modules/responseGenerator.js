@@ -66,6 +66,13 @@ export function missingFields(res, fields) {
     fields: fields,
   });
 }
+export function incidentNotFound(res, id) {
+  res.status(404).send({
+    status: "Incident not found.",
+    e: 12,
+    id: id,
+  });
+}
 
 // server errors
 export function databaseError(req, res, err) {
@@ -147,5 +154,12 @@ export function sendListOfReports(
     reports: reports,
     reportCount: reports.length,
     token: token,
+  });
+}
+export function incidentFound(res, incident) {
+  res.send({
+    status: "Incident found.",
+    e: 0,
+    incident: incident,
   });
 }

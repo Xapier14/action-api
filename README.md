@@ -57,17 +57,23 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
 
 ## Progress
 
-- [x] Accounts
+- [ ] Accounts
   - [x] Create account
   - [x] Login
+  - [ ] Delete account
+  - [ ] Modify account
+  - [ ] Check token
 - [ ] Reports
   - [x] Create report
-  - [ ] View single report
-  - [ ] View all and filter reports
+  - [x] View single report
+  - [x] View all and filter reports
+  - [ ] Delete report
+  - [ ] Modify report
 - [ ] Attachments
   - [x] Upload attachment
   - [x] Retrieve attachment
   - [ ] Retrieve all by report id
+  - [ ] Delete attachment
 
 ## Routes
 
