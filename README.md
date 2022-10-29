@@ -139,7 +139,7 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
       | `resolved` | Filter by resolved status | No |
       | `pageOffset` | Zero-based page offset | No |
       | `limit` | Limit results for pagination | No |
-    - `/delete` - POST Method
+    - `/delete/{id}` - POST Method
 
       > Requires `accessLevel >= 1`
 
@@ -148,6 +148,7 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
       | `reportId` | The id of the report | Yes       |
 
   - `/attachments` - _requires session token_
+
     - `/{id}` - GET Method
       | Parameter | Description | Required? |
       |-|-|-|
@@ -156,6 +157,13 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
       | Parameter | Description | Required? |
       |-|-|-|
       | `file` | Attachment data | Yes |
+    - `/delete/{id}` - POST Method
+
+      > Requires `accessLevel >= 1`
+
+      | Parameter | Description                    | Required? |
+      | --------- | ------------------------------ | --------- |
+      | `id`      | The media id of the attachment | Yes       |
 
 ## License
 
