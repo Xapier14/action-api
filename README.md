@@ -99,6 +99,8 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
     | `location`       | Campus/Location designation of the user | Yes                 |
     | `maxAccessLevel` | Max access level of the new account     | No, defaults to `0` |
 
+  - `/check` - _session token optional_
+
   - `/reports` - _requires session token_
 
     - `/create` - POST Method

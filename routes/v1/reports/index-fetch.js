@@ -1,6 +1,4 @@
 import { Router } from "express";
-import fs from "fs";
-import util from "util";
 
 // modules
 import {
@@ -11,7 +9,6 @@ import {
 
 // models
 import IncidentSchema from "../../../models/incident.js";
-import { report } from "process";
 
 const router = Router();
 

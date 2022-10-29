@@ -25,3 +25,14 @@ export function clearLocalCache() {
     }
   });
 }
+
+export function deleteAttachment(attachmentId, extension) {
+  const filePath = path.join("attachments", attachmentId + "." + extension);
+  if (!fs.existsSync(filePath)) {
+    console.log(`file ${filePath} does not exist`);
+  }
+
+  fs.unlink(filePath, (err) => {
+    if (err) throw err;
+  });
+}

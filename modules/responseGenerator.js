@@ -129,6 +129,13 @@ export function attachmentUploadSuccess(
     token: token,
   });
 }
+export function attachmentDeleteSuccess(res, token) {
+  res.send({
+    status: "Attachment delete successful.",
+    e: 0,
+    token: token,
+  });
+}
 export function incidentReportSuccess(res, token, incidentId) {
   res.send({
     status: "Incident report successful.",
@@ -161,5 +168,31 @@ export function incidentFound(res, incident) {
     status: "Incident found.",
     e: 0,
     incident: incident,
+  });
+}
+
+// misc responses
+export function sendNoSession(res) {
+  res.send({
+    status: "No session.",
+    sessionState: "noSession",
+    e: 0,
+  });
+}
+export function sendInvalidSession(res) {
+  res.send({
+    status: "Invalid session.",
+    sessionState: "invalidSession",
+    e: 0,
+  });
+}
+export function sendValidSession(res, token, email, createdAt) {
+  res.send({
+    status: "Valid session.",
+    sessionState: "validSession",
+    e: 0,
+    token: token,
+    email: email,
+    createdAt: createdAt,
   });
 }
