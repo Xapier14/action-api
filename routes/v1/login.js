@@ -33,6 +33,7 @@ const router = Router();
 
 router.use(fields(["email", "password"]));
 router.post("/", async (req, res) => {
+  console.log("try log");
   // get email and password fields
   const email = req.body.email;
   const password = req.body.password;
@@ -42,6 +43,7 @@ router.post("/", async (req, res) => {
 
     // no email OR password doesn't match
     if (user === null || !(await bcrypt.compare(password, user.password))) {
+      console.log("bad login");
       badLogin(res);
       return;
     }
@@ -52,6 +54,7 @@ router.post("/", async (req, res) => {
         ? req.body.accessLevel
         : 0;
     if (accessLevel > user.maxAccessLevel) {
+      console.log("access level too high");
       accessLevelTooHigh(res);
       return;
     }
@@ -60,11 +63,14 @@ router.post("/", async (req, res) => {
     // create new session token
     const token = createSession(user.id, accessLevel);
     if (!token) {
+      console.log("database error");
       databaseError(req, res, "Failed to issue session token");
       return;
     }
+    console.log("login success");
     loginSuccess(res, token);
   } catch (err) {
+    console.log("database error");
     databaseError(req, res, err);
   }
 });

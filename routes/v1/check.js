@@ -20,6 +20,7 @@ const router = Router();
 
 router.get("/", async (req, res) => {
   const token = req.headers.authorization;
+  console.log("try check");
   if (!token) {
     sendNoSession(res);
     return;

@@ -1,6 +1,7 @@
 import express, { json } from "express";
 import mongoose from "mongoose";
 import bodyparser from "body-parser";
+import cors from "cors";
 import readline from "readline";
 import bcrypt from "bcrypt";
 import { revokeAllCreatedSessions } from "./modules/tokens.js";
@@ -18,6 +19,7 @@ app.use(
     extended: true,
   })
 );
+app.use(cors());
 app.use(json());
 app.use("/api/v1", v1);
 app.use("/", express.static("static"));
