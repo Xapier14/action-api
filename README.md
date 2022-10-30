@@ -54,7 +54,7 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
    Login to the API using the credentials above via the `/api/v1/login` endpoint.
 
    ```
-   curl -X POST -H "Content-Type: application/json" -d '{"email": admin@g.batstate-u.edu.ph, "password": Admin123}' http://localhost:80/api/v1/login
+   curl -X POST -H "Content-Type: application/json" -d '{"email": admin@g.batstate-u.edu.ph, "password": Admin123, "accessLevel": 1}' http://localhost:80/api/v1/login
    ```
 
    If not supplied with an access level, the API will default to `0`.
@@ -72,9 +72,9 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
    You can then use the returned `token` to access the other endpoints.
 
 1. Create other accounts via the `/api/v1/signup` endpoint.
-   This requires an `accessToken` with an `accessLevel` of `1` or higher.
+   This requires an `token` with an `accessLevel` of `1` or higher.
    ```
-   curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer <accessToken>" -d '{"email": <email-of-new-user>, "password": <password-of-new-user>}' http://localhost:80/api/v1/signup
+   curl -X POST -H "Content-Type: application/json" -H "Authorization: <token>" -d '{"email": <email-of-new-user>, "password": <password-of-new-user>}' http://localhost:80/api/v1/signup
    ```
    Supply a `maxAccessLevel` parameter to limit the maximum access level of the new user.
    If not supplied, the new user will have an access level of `0`.
