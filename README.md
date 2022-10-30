@@ -19,33 +19,58 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
    npm install
    ```
 1. Create the environment file.
+
    ```
    cp .env.example .env
    ```
-   > **NOTE:** You will need to update the `.env` file with your own values.
-   > The environment file should look something like this:
+
+   > **Important:**
+   > You will need to update the `.env` file with your own values.
+
+   The environment file should look something like this:
+
    ```
    DB_CONNECTION=mongodb://<hostname>:27017/action-api
    PORT=80
    JWT_SECRT=some-secret-passphrase
    ```
-   _If you are using MongoDB Atlas, just paste the connection string from your dashboard._
+
+   > **Note:**
+   > If you are using MongoDB Atlas, just paste the connection string from your dashboard.
+
 1. Run the `start` script.
    ```
    npm run start
    ```
 1. You should now be able to access the API at `http://localhost:80`.
    On the first run, a default admin user will be created with the following credentials:
+
    ```
    email: admin@g.batstate-u.edu.ph
    password: Admin123
    ```
+
    This account holds an access level of `1`.
    Login to the API using the credentials above via the `/api/v1/login` endpoint.
+
    ```
    curl -X POST -H "Content-Type: application/json" -d '{"email": admin@g.batstate-u.edu.ph, "password": Admin123}' http://localhost:80/api/v1/login
    ```
-   You can then use the returned `accessToken` to access the other endpoints.
+
+   If not supplied with an access level, the API will default to `0`.
+
+   Sample response:
+
+   ```json
+   {
+     "status": "Login successful.",
+     "e": 0,
+     "token": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+   }
+   ```
+
+   You can then use the returned `token` to access the other endpoints.
+
 1. Create other accounts via the `/api/v1/signup` endpoint.
    This requires an `accessToken` with an `accessLevel` of `1` or higher.
    ```
