@@ -88,12 +88,18 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
   - [ ] Delete account
   - [ ] Modify account password
   - [x] Check token
+  - [ ] Logout (delete token)
 - [ ] Incidents
   - [x] Create incident
   - [x] View single incident
   - [x] View all and filter incidents
   - [ ] Delete incident
   - [ ] Modify incident
+- [ ] Buildings
+  - [x] Add building
+  - [x] List buildings
+  - [ ] Delete building
+  - [ ] Modify building
 - [ ] Attachments
   - [x] Upload attachment
   - [x] Retrieve attachment
