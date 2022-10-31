@@ -1,4 +1,32 @@
 import IncidentSchema from "../models/incident.js";
+import BuildingSchema from "../models/building.js";
+import UserSchema from "../models/user.js";
+
+let buildingCache = {};
+let userCache = {};
+
+async function getBuildingName(buildingId) {
+  if (buildingCache[buildingId]) {
+    return buildingCache[buildingId];
+  } else {
+    const buildingName = (await BuildingSchema.findOne({ _id: buildingId }))
+      .name;
+    buildingCache[buildingId] = buildingName;
+    return buildingName;
+  }
+}
+
+async function getUserName(userId) {
+  if (userCache[userId]) {
+    return userCache[userId];
+  } else {
+    const user = await UserSchema.findOne({ _id: userId });
+    if (!user) return "Unknown User";
+    const name = user.firstName + " " + user.lastName;
+    userCache[userId] = name;
+    return name;
+  }
+}
 
 export async function fetchIncidents(
   minified,
@@ -31,26 +59,30 @@ export async function fetchIncidents(
       const incidents = await IncidentSchema.find(query)
         .skip(pageOffset * limit)
         .limit(limit)
-        .sort({ createdAt: -1 })
         .exec();
       let results = [];
       if (minified === true) {
-        results = incidents.map((incident) => {
-          return {
-            id: incident._id,
-            inspectorId: incident.inspectorId,
-            inspectedDateTime: incident.inspectedDateTime,
-            location: incident.location,
-            buildingId: incident.buildingId,
-            severityStatus: incident.severityStatus,
-            resolved: incident.resolved,
-          };
-        });
+        results = await Promise.all(
+          incidents.map(async (incident) => {
+            let buildingName = await getBuildingName(incident.buildingId);
+            let inspectorName = await getUserName(incident.inspectorId);
+            return {
+              id: incident._id,
+              inspector: inspectorName,
+              inspectedDateTime: incident.inspectedDateTime,
+              location: incident.location,
+              buildingName: buildingName,
+              severityStatus: incident.severityStatus,
+              resolved: incident.resolved,
+            };
+          })
+        );
       } else {
         results = incidents;
       }
       resolve(results ?? []);
     } catch (err) {
+      console.log(err);
       reject(null);
     }
   });

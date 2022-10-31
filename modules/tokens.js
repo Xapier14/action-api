@@ -52,3 +52,9 @@ export async function getLocationFromToken(token) {
   if (user === null) return null;
   return user.location;
 }
+
+export async function getUserIdFromToken(token) {
+  const session = await SessionSchema.findOne({ token: token }).exec();
+  if (session === null) return null;
+  return session.userId;
+}

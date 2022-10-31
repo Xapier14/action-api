@@ -1,5 +1,10 @@
+// packages
 import { Router } from "express";
 
+// middlewares
+import { mustBeAccessLevel } from "../../../middlewares/authorization.js";
+
+// modules
 import {
   fetchIncidents,
   countIncidents,
@@ -11,6 +16,7 @@ import {
 import {
   getLocationFromToken,
   verifySession,
+  getUserIdFromToken,
 } from "../../../modules/tokens.js";
 
 const router = Router();
@@ -18,6 +24,8 @@ const router = Router();
 //router.get("/", mustBeAccessLevel(1));
 router.get("/", async (req, res) => {
   const token = req.headers.authorization;
+  const userId = await getUserIdFromToken(token);
+
   const accessLevel = (await verifySession(token)) ?? 0;
   const userLocation = await getLocationFromToken(token);
   const limit = Math.min(req.query.limit ?? 10, 100);
@@ -25,22 +33,16 @@ router.get("/", async (req, res) => {
     accessLevel > 0 ? req.query.location ?? undefined : userLocation;
   const buildingId = req.query.buildingId;
   const severityStatus = req.query.severityStatus;
-  const inspectorId = req.params.inspectorId;
+  const inspectorId = accessLevel > 0 ? req.query.inspectorId : undefined;
   const resolved = req.query.resolved;
-  const maxPageOffset = Math.max(
-    0,
-    Math.floor(
-      (await countIncidents(
-        location,
-        buildingId,
-        severityStatus,
-        inspectorId,
-        resolved
-      )) /
-        limit -
-        1
-    )
+  const totalReportCount = await countIncidents(
+    location,
+    buildingId,
+    severityStatus,
+    inspectorId,
+    resolved
   );
+  const maxPageOffset = Math.max(0, Math.ceil(totalReportCount / limit - 1));
   const pageOffset = Math.min(
     Math.max(req.query.pageOffset ?? 0, 0),
     maxPageOffset
@@ -59,7 +61,15 @@ router.get("/", async (req, res) => {
     generalInternalError(req, res);
     return;
   }
-  sendListOfReports(res, token, results, pageOffset, maxPageOffset, limit);
+  sendListOfReports(
+    res,
+    token,
+    results,
+    pageOffset,
+    maxPageOffset,
+    limit,
+    totalReportCount
+  );
 });
 
 // router.get("/:accountId", async (req, res) => {

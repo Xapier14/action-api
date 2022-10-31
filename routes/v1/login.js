@@ -34,7 +34,7 @@ const router = Router();
 router.use(fields(["email", "password"]));
 router.post("/", async (req, res) => {
   // get email and password fields
-  const email = req.body.email;
+  const email = req.body.email?.toLowerCase() ?? "";
   const password = req.body.password;
 
   try {

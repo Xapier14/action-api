@@ -43,15 +43,17 @@ const router = Router();
 router.use(fields(["email", "password", "firstName", "lastName", "location"]));
 router.use(mustBeAccessLevel(1));
 router.post("/", async (req, res) => {
-  const email = req.body.email;
+  const email = req.body.email?.toLowerCase() ?? "";
   const password = req.body.password;
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
   const location = req.body.location;
   const maxAccessLevel = Math.max(req.body.maxAccessLevel ?? 0, 0);
+  const emailValidationRegex =
+    /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 
   // check if email is invalid
-  if (email === null) {
+  if (!emailValidationRegex.test(email)) {
     badEmail(res);
     return;
   }

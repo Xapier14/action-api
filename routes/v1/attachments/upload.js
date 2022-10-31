@@ -1,15 +1,20 @@
+// packages
 import { Router } from "express";
 import path from "path";
 import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 
+// middlewares
 import { uploadSingle } from "../../../middlewares/upload.js";
+
+// modules
 import {
   attachmentUploadSuccess,
   databaseError,
 } from "../../../modules/responseGenerator.js";
 import { checkMimeType } from "../../../modules/typeCheck.js";
 
+// models
 import AttachmentSchema from "../../../models/attachment.js";
 import UserSchema from "../../../models/user.js";
 

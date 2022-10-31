@@ -86,18 +86,18 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
   - [x] Create account
   - [x] Login
   - [ ] Delete account
-  - [ ] Modify account
-  - [ ] Check token
-- [ ] Reports
-  - [x] Create report
-  - [x] View single report
-  - [x] View all and filter reports
-  - [ ] Delete report
-  - [ ] Modify report
+  - [ ] Modify account password
+  - [x] Check token
+- [ ] Incidents
+  - [x] Create incident
+  - [x] View single incident
+  - [x] View all and filter incidents
+  - [ ] Delete incident
+  - [ ] Modify incident
 - [ ] Attachments
   - [x] Upload attachment
   - [x] Retrieve attachment
-  - [ ] Retrieve all by report id
+  - [ ] Retrieve all by incident id
   - [ ] Delete attachment
 
 ## Routes
@@ -126,12 +126,12 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
 
   - `/check` - _session token optional_
 
-  - `/reports` - _requires session token_
+  - `/incidents` - _requires session token_
 
     - `/create` - POST Method
       | Parameter | Description | Required? |
       |-|-|-|
-      | `inspectedDateTime` | DateTime of report | Yes |
+      | `inspectedDateTime` | DateTime of incident | Yes |
       | `location` | Location | Yes |
       | `buildingId` | Building ID in campus defined by `location` | Yes |
       | `collapsedStructure` | Evaluation severity number-based enum | Yes |
@@ -157,8 +157,8 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
     - `/list` - GET Method
       | Parameter | Description | Required? |
       |-|-|-|
-      | `location` | Filter by report location | No (filter is only usable if used with `accessLevel >= 1`) |
-      | `buildingId` | Building ID of report | No (Yes if using `location`) |
+      | `location` | Filter by incident location | No. Yes if using `buildingId`. (location filter is only usable if used with `accessLevel >= 1`) |
+      | `buildingId` | Building ID of report | No |
       | `severityStatus` | General severity status | No |
       | `inspectorId` | Filter by inspector | No |
       | `resolved` | Filter by resolved status | No |
@@ -189,6 +189,14 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
       | Parameter | Description                    | Required? |
       | --------- | ------------------------------ | --------- |
       | `id`      | The media id of the attachment | Yes       |
+
+    - `/from/{id}` - GET Method
+
+      > Requires `accessLevel >= 1` or incident is owned by the user
+
+      | Parameter | Description | Required? |
+      | --------- | ----------- | --------- |
+      | `id`      | Incident ID | Yes       |
 
 ## License
 

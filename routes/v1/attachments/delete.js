@@ -1,3 +1,14 @@
+/*
+ * POST /delete/{:id}
+ *   required parameters: id
+ *   response:
+ *    - 200: attachment delete successfull (e: 0)
+ *    - 401: unauthorized (e: 7)
+ *    - 404: attachment not found (e: 10)
+ *    - 500: file read error (internal server error) (e: -2)
+ */
+
+// packages
 import { Router } from "express";
 
 // modules
@@ -7,11 +18,10 @@ import {
   internalFileReadError,
   attachmentDeleteSuccess,
 } from "../../../modules/responseGenerator.js";
+import { deleteAttachment } from "../../../modules/attachment.js";
 
 // models
 import AttachmentSchema from "../../../models/attachment.js";
-
-import { deleteAttachment } from "../../../modules/attachment.js";
 
 const router = Router();
 

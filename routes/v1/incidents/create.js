@@ -1,13 +1,21 @@
+// packages
 import { Router } from "express";
 
+// middlewares
 import { fields } from "../../../middlewares/required.js";
-import IncidentSchema from "../../../models/incident.js";
-import SessionSchema from "../../../models/session.js";
+
+// modules
 import { getRequiredFieldsForReport } from "../../../modules/format.js";
 import {
   databaseError,
   incidentReportSuccess,
+  buildingNotFound,
 } from "../../../modules/responseGenerator.js";
+
+// models
+import IncidentSchema from "../../../models/incident.js";
+import SessionSchema from "../../../models/session.js";
+import BuildingSchema from "../../../models/building.js";
 
 const router = Router();
 
@@ -17,6 +25,19 @@ router.post("/", async (req, res) => {
     const session = await SessionSchema.findOne({
       token: req.headers.authorization,
     });
+    try {
+      const building = await BuildingSchema.findOne({
+        _id: req.body.buildingId,
+        location: req.body.location,
+      });
+      if (!building) {
+        buildingNotFound(res, req.body.buildingId);
+        return;
+      }
+    } catch {
+      buildingNotFound(res, req.body.buildingId);
+      return;
+    }
     const severityStatus = Math.max(
       req.body.collapsedStructure ?? 0,
       req.body.leaningOrOutOfPlumb ?? 0,

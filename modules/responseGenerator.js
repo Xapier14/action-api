@@ -70,7 +70,14 @@ export function incidentNotFound(res, id) {
   res.status(404).send({
     status: "Incident not found.",
     e: 12,
-    id: id,
+    incidentId: id,
+  });
+}
+export function buildingNotFound(res, id) {
+  res.status(404).send({
+    status: "Building not found.",
+    e: 13,
+    buildingId: id,
   });
 }
 
@@ -150,7 +157,8 @@ export function sendListOfReports(
   reports,
   pageOffset,
   maxPageOffset,
-  limit
+  limit,
+  totalReportCount
 ) {
   res.send({
     status: `Retrieved page ${pageOffset} of ${maxPageOffset} with ${reports.length} report(s).`,
@@ -160,6 +168,7 @@ export function sendListOfReports(
     limit: limit,
     reports: reports,
     reportCount: reports.length,
+    totalReportCount: totalReportCount,
     token: token,
   });
 }
@@ -168,6 +177,20 @@ export function incidentFound(res, incident) {
     status: "Incident found.",
     e: 0,
     incident: incident,
+  });
+}
+export function buildingAdded(res, id) {
+  res.send({
+    status: "Building added.",
+    e: 0,
+    buildingId: id,
+  });
+}
+export function sendBuildingList(res, location, buildings) {
+  res.send({
+    status: `Buildings from '${location}' retrieved.`,
+    e: 0,
+    buildings: buildings,
   });
 }
 

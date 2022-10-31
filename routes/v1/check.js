@@ -1,5 +1,9 @@
 /*
  * GET /check
+ *   response:
+ *    - 200: no session (e: 0, sessionState: 'noSession')
+ *    - 200: valid session (e: 0, sessionState: 'validSession')
+ *    - 200: invalid session (e: 0, sessionState: 'invalidSession')
  */
 
 // packages
