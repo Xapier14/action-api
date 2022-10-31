@@ -57,6 +57,7 @@ export async function fetchIncidents(
     }
     try {
       const incidents = await IncidentSchema.find(query)
+        .sort({ inspectedDateTime: -1 })
         .skip(pageOffset * limit)
         .limit(limit)
         .exec();
