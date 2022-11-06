@@ -6,10 +6,10 @@ import {
   unauthorized,
   buildingNotFound,
   buildingDeleted,
-} from "../../modules/responseGenerator.js";
+} from "../../../modules/responseGenerator.js";
 
 // models
-import BuildingSchema from "../../models/building.js";
+import BuildingSchema from "../../../models/building.js";
 
 const router = Router();
 
@@ -28,3 +28,5 @@ router.post("/:id", async (req, res) => {
     }
   });
 });
+
+export default router;

@@ -131,6 +131,12 @@ export function loginSuccess(res, token) {
     token: token,
   });
 }
+export function logoutSuccess(res) {
+  res.send({
+    status: "Logout successful.",
+    e: 0,
+  });
+}
 export function signupSuccess(res, token) {
   res.send({
     status: "Signup successful.",
