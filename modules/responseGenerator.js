@@ -80,6 +80,22 @@ export function buildingNotFound(res, id) {
     buildingId: id,
   });
 }
+export function parameterOutOfRange(res, parameter, min, max) {
+  res.status(400).send({
+    status: "Parameter out of range.",
+    e: 14,
+    parameter: parameter,
+    min: min,
+    max: max,
+  });
+}
+export function invalidParameter(res, parameter) {
+  res.status(400).send({
+    status: "Invalid parameter.",
+    e: 15,
+    parameter: parameter,
+  });
+}
 
 // server errors
 export function databaseError(req, res, err) {
