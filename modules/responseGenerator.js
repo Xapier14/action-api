@@ -202,6 +202,12 @@ export function buildingAdded(res, id) {
     buildingId: id,
   });
 }
+export function buildingDeleted(res) {
+  res.send({
+    status: "Building deleted.",
+    e: 0,
+  });
+}
 export function sendBuildingList(res, location, buildings) {
   res.send({
     status: `Buildings from '${location}' retrieved.`,
