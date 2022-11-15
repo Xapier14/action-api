@@ -10,6 +10,7 @@ export function getRequiredFieldsForReport() {
     "inspectedDateTime",
     "location",
     "buildingId",
+    "areasInspected",
     "collapsedStructure",
     "leaningOrOutOfPlumb",
     "damageToPrimaryStructure",

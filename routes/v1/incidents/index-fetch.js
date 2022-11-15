@@ -19,7 +19,6 @@ router.get("/", (req, res) => {
 
 router.get("/:id", async (req, res) => {
   const reportId = req.params.id;
-  const token = req.headers.authorization;
   // get incident
   try {
     const incident = await IncidentSchema.findOne({ _id: reportId });
@@ -34,6 +33,7 @@ router.get("/:id", async (req, res) => {
       inspectedDateTime: incident.inspectedDateTime,
       location: incident.location,
       buildingId: incident.buildingId,
+      areasInspected: incident.areasInspected,
       collapsedStructure: incident.collapsedStructure,
       leaningOrOutOfPlumb: incident.leaningOrOutOfPlumb,
       damageToPrimaryStructure: incident.damageToPrimaryStructure,
@@ -47,9 +47,11 @@ router.get("/:id", async (req, res) => {
       inspectedPlacard: incident.inspectedPlacard,
       restrictedPlacard: incident.restrictedPlacard,
       unsafePlacard: incident.unsafePlacard,
-      barricadeNeeded: incident.barricadeNeeded,
+      doNotEnter: incident.doNotEnter,
+      briefEntryAllowed: incident.briefEntryAllowed,
+      doNotUse: incident.doNotUse,
+      otherRestrictions: incident.otherRestrictions,
       barricadeComment: incident.barricadeComment,
-      detailedEvaluationNeeded: incident.detailedEvaluationNeeded,
       detailedEvaluationAreas: incident.detailedEvaluationAreas,
       otherRecommendations: incident.otherRecommendations,
       furtherComments: incident.furtherComments,

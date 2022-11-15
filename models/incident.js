@@ -13,6 +13,10 @@ const IncidentSchema = new Schema({
     type: String,
     required: true,
   },
+  areasInspected: {
+    type: String, // exterior || exterior&interior
+    required: true,
+  },
   // Building Description
   buildingId: {
     type: String,
@@ -72,18 +76,27 @@ const IncidentSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  // Further Actions
-  barricadeNeeded: {
+  doNotEnter: {
+    type: String,
+    default: "",
+  },
+  briefEntryAllowed: {
+    type: String,
+    default: "",
+  },
+  doNotUse: {
     type: Boolean,
     default: false,
   },
-  barricadeComment: {
+  otherRestrictions: {
     type: String,
     default: "-n/a-",
   },
-  detailedEvaluationNeeded: {
-    type: Boolean,
-    default: false,
+  // Further Actions
+  barricadeComment: {
+    // do not enter
+    type: String,
+    default: "-n/a-",
   },
   detailedEvaluationAreas: {
     type: Array,

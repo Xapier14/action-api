@@ -96,6 +96,13 @@ export function invalidParameter(res, parameter) {
     parameter: parameter,
   });
 }
+export function userNotFound(res, id) {
+  res.status(404).send({
+    status: "User not found.",
+    e: 16,
+    userId: id,
+  });
+}
 
 // server errors
 export function databaseError(req, res, err) {
@@ -219,6 +226,18 @@ export function sendBuildingList(res, location, buildings) {
     status: `Buildings from '${location}' retrieved.`,
     e: 0,
     buildings: buildings,
+  });
+}
+export function userResolved(res, userId, firstName, lastName, location) {
+  res.send({
+    status: "User resolved.",
+    e: 0,
+    userId: userId,
+    user: {
+      firstName: firstName,
+      lastName: lastName,
+      location: location,
+    },
   });
 }
 

@@ -52,6 +52,7 @@ router.post("/", async (req, res) => {
       inspectedDateTime: req.body.inspectedDateTime,
       location: req.body.location,
       buildingId: req.body.buildingId,
+      areasInspected: req.body.areasInspected,
       collapsedStructure: req.body.collapsedStructure,
       leaningOrOutOfPlumb: req.body.leaningOrOutOfPlumb,
       damageToPrimaryStructure: req.body.damageToPrimaryStructure,
