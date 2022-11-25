@@ -12,11 +12,6 @@ import {
 import IncidentSchema from "../../../models/incident.js";
 
 const router = Router();
-
-router.get("/", (req, res) => {
-  unauthorized(res);
-});
-
 router.get("/:id", async (req, res) => {
   const reportId = req.params.id;
   // get incident

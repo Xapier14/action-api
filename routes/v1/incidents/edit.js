@@ -10,14 +10,16 @@ import {
 import { verifySession, getUserIdFromToken } from "../../../modules/tokens.js";
 
 import IncidentSchema from "../../../models/incident.js";
+import { mustBeAccessLevel } from "../../../middlewares/authorization.js";
 
 const router = Router();
 
-router.post("/", (req, res) => {
+router.use(mustBeAccessLevel(1));
+router.patch("/", (req, res) => {
   unauthorized(res);
 });
 
-router.post("/:id", async (req, res) => {
+router.patch("/:id", async (req, res) => {
   const id = req.params.id;
   if (!id) {
     unauthorized(res);

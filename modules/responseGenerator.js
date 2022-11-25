@@ -131,11 +131,12 @@ export function generalInternalError(req, res) {
 }
 
 // success responses
-export function loginSuccess(res, token) {
+export function loginSuccess(res, token, location) {
   res.send({
     status: "Login successful.",
     e: 0,
     token: token,
+    location: location,
   });
 }
 export function logoutSuccess(res) {
@@ -256,12 +257,23 @@ export function sendInvalidSession(res) {
     e: 0,
   });
 }
-export function sendValidSession(res, token, email, createdAt) {
+export function sendValidSession(
+  res,
+  token,
+  id,
+  name,
+  location,
+  email,
+  createdAt
+) {
   res.send({
     status: "Valid session.",
     sessionState: "validSession",
     e: 0,
     token: token,
+    id: id,
+    name: name,
+    location: location,
     email: email,
     createdAt: createdAt,
   });

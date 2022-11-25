@@ -63,7 +63,7 @@ router.post("/", async (req, res) => {
       databaseError(req, res, "Failed to issue session token");
       return;
     }
-    loginSuccess(res, token);
+    loginSuccess(res, token, user.location);
   } catch (err) {
     databaseError(req, res, err);
   }

@@ -38,7 +38,15 @@ router.get("/", async (req, res) => {
     sendInvalidSession(res);
     return;
   }
-  sendValidSession(res, token, user.email, session.createdAt);
+  sendValidSession(
+    res,
+    token,
+    user.id,
+    user.firstName + " " + user.lastName,
+    user.location,
+    user.email,
+    session.createdAt
+  );
 });
 
 export default router;
