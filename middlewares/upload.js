@@ -7,7 +7,7 @@
  * Requires 'responseGenerator.js' and 'typeCheck.js'
  */
 
-const STORAGE_PATH = "localUploadCache/";
+const STORAGE_PATH = "./localUploadCache/";
 
 import multer from "multer";
 import { invalidFileupload } from "../modules/responseGenerator.js";
@@ -15,6 +15,7 @@ import { getAllAllowedMimeTypes } from "../modules/typeCheck.js";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    console.log(file);
     cb(null, STORAGE_PATH);
   },
   filename: (req, file, cb) => {
@@ -33,7 +34,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage: storage, fileFilter: fileFilter });
 
 function perFileHandler(file) {
-  // this functio is called for each file upload
+  // this function is called for each file upload
   if (file == null) return true;
 
   // handle file here, e.g.:
@@ -45,6 +46,7 @@ export function uploadSingle(field) {
   return (req, res, next) => {
     middleware(req, res, (err) => {
       if (err || perFileHandler(req.file)) {
+        console.error(err);
         invalidFileupload(res);
         return;
       }

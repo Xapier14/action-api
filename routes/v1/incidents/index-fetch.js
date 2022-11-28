@@ -47,7 +47,7 @@ router.get("/:id", async (req, res) => {
       doNotUse: incident.doNotUse,
       otherRestrictions: incident.otherRestrictions,
       barricadeComment: incident.barricadeComment,
-      detailedEvaluationAreas: incident.detailedEvaluationAreas,
+      detailedEvaluationAreas: removeItemFromArray(incident.detailedEvaluationAreas, ""),
       otherRecommendations: incident.otherRecommendations,
       furtherComments: incident.furtherComments,
       attachments: incident.attachments,
@@ -59,5 +59,15 @@ router.get("/:id", async (req, res) => {
     incidentNotFound(res, reportId);
   }
 });
+
+function removeItemFromArray(array, item) {
+  // make copy
+  const copy = [...array];
+  const index = copy.indexOf(item);
+  if (index > -1) {
+    copy.splice(index, 1);
+  }
+  return copy;
+};
 
 export default router;

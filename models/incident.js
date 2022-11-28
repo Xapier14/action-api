@@ -94,7 +94,6 @@ const IncidentSchema = new Schema({
   },
   // Further Actions
   barricadeComment: {
-    // do not enter
     type: String,
     default: "-n/a-",
   },
@@ -104,7 +103,7 @@ const IncidentSchema = new Schema({
   },
   otherRecommendations: {
     type: String,
-    default: "-n/a-",
+    default: "",
   },
   furtherComments: {
     type: String,
