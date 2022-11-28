@@ -38,7 +38,8 @@ router.post("/", async (req, res) => {
       buildingNotFound(res, req.body.buildingId);
       return;
     }
-    const average = (req.body.collapsedStructure ?? 0) / 3 +
+    const average =
+      (req.body.collapsedStructure ?? 0) / 3 +
       (req.body.leaningOrOutOfPlumb ?? 0) / 3 +
       (req.body.damageToPrimaryStructure ?? 0) / 3 +
       (req.body.fallingHazards ?? 0) / 3 +
@@ -46,9 +47,10 @@ router.post("/", async (req, res) => {
       (req.body.damagedSubmergedFixtures ?? 0) / 3 +
       (req.body.proximityRisk ?? 0) / 3;
     const baseSeverityStatus = average > 0 ? average / 7 : 0;
-    const severityStatus = Math.min(1, (baseSeverityStatus * 2 + req.body.estimatedBuildingDamage / 5 * 4) / 4);
-    console.log('base: ', baseSeverityStatus);
-    console.log('overall: ', severityStatus);
+    const severityStatus = Math.min(
+      1,
+      (baseSeverityStatus * 2 + (req.body.estimatedBuildingDamage / 5) * 4) / 4
+    );
     const incident = await IncidentSchema.create({
       inspectorId: session.userId,
       inspectedDateTime: req.body.inspectedDateTime,
@@ -71,13 +73,12 @@ router.post("/", async (req, res) => {
       barricadeNeeded: req.body.barricadeNeeded,
       barricadeComment: req.body.barricadeComment,
       detailedEvaluationNeeded: req.body.detailedEvaluationNeeded,
-      detailedEvaluationAreas: req.body.detailedEvaluationAreas.split(','),
+      detailedEvaluationAreas: req.body.detailedEvaluationAreas.split(","),
       otherRecommendations: req.body.otherRecommendations,
       furtherComments: req.body.furtherComments,
       attachments: req.body.attachments,
       severityStatus: Math.round(severityStatus * 3),
     });
-    console.log("incident array is: ", req.body.detailedEvaluationAreas.split(','));
     incidentReportSuccess(res, req.headers.authorization, incident._id);
   } catch (err) {
     databaseError(req, res, err);
