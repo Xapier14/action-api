@@ -209,6 +209,13 @@ export function incidentFound(res, incident) {
     incident: incident,
   });
 }
+export function buildingFound(res, building) {
+  res.send({
+    status: "Building found.",
+    e: 0,
+    building: building,
+  });
+}
 export function buildingAdded(res, id) {
   res.send({
     status: "Building added.",

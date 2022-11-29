@@ -12,6 +12,10 @@ const BuildingSchema = new Schema({
     type: Number,
     required: true,
   },
+  otherInformation: {
+    type: String,
+    default: "-n/a-",
+  },
 });
 
 export default model("Building", BuildingSchema);
