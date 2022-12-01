@@ -202,6 +202,40 @@ export function sendListOfReports(
     token: token,
   });
 }
+export function sendAccountsCount(res, count, location) {
+  if (location == undefined) {
+    res.send({
+      status: "Counted accounts",
+      e: 0,
+      count: count,
+    });
+    return;
+  }
+  res.send({
+    status: "Counted accounts",
+    e: 0,
+    count: count,
+    location: location,
+  });
+}
+export function sendReportsCount(res, count, location, building) {
+  if (building == undefined) {
+    res.send({
+      status: "Counted reports",
+      e: 0,
+      location: location,
+      count: count,
+    });
+    return;
+  }
+  res.send({
+    status: "Counted reports",
+    e: 0,
+    location: location,
+    buildingId: building,
+    count: count,
+  });
+}
 export function incidentFound(res, incident) {
   res.send({
     status: "Incident found.",
