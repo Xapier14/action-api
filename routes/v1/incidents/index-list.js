@@ -30,8 +30,10 @@ router.get("/", async (req, res) => {
   const userLocation = await getLocationFromToken(token);
   const limit = Math.min(req.query.limit ?? 10, 100);
   const location =
-    accessLevel > 0 ? req.query.location ?? undefined : userLocation;
-  const buildingId = req.query.buildingId;
+    (accessLevel > 0 ? req.query.location ?? undefined : userLocation)?.split(
+      ","
+    ) ?? [];
+  const buildingId = req.query.buildingId?.split(",") ?? [];
   const severityStatus = req.query.severityStatus;
   const inspectorId = accessLevel > 0 ? req.query.inspectorId : undefined;
   const resolved = req.query.resolved;

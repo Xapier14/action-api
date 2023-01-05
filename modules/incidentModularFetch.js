@@ -40,21 +40,31 @@ export async function fetchIncidents(
 ) {
   return new Promise(async (resolve, reject) => {
     const query = {};
-    if (location !== undefined) {
-      query.location = location;
+    let and = [];
+    if (location.length > 0) {
+      let or = [];
+      for (let i = 0; i < location.length; i++) {
+        or.push({ location: location[i] });
+      }
+      and.push({ $or: or });
     }
-    if (buildingId !== undefined) {
-      query.buildingId = buildingId;
+    if (buildingId.length > 0) {
+      let or = [];
+      for (let i = 0; i < buildingId.length; i++) {
+        or.push({ buildingId: buildingId[i] });
+      }
+      and.push({ $or: or });
     }
     if (severityStatus !== undefined) {
-      query.severityStatus = severityStatus;
+      and.push({ severityStatus: severityStatus });
     }
     if (fromInspectorId !== undefined) {
-      query.inspectorId = fromInspectorId;
+      and.push({ inspectorId: fromInspectorId });
     }
     if (resolved !== undefined) {
-      query.resolved = resolved;
+      and.push({ resolved: resolved });
     }
+    if (and.length > 0) query.$and = and;
     try {
       const incidents = await IncidentSchema.find(query)
         .sort({ inspectedDateTime: -1 })
@@ -97,21 +107,31 @@ export async function countIncidents(
 ) {
   return new Promise(async (resolve, reject) => {
     const query = {};
-    if (location !== undefined) {
-      query.location = location;
+    let and = [];
+    if (location.length > 0) {
+      let or = [];
+      for (let i = 0; i < location.length; i++) {
+        or.push({ location: location[i] });
+      }
+      and.push({ $or: or });
     }
-    if (buildingId !== undefined) {
-      query.buildingId = buildingId;
+    if (buildingId.length > 0) {
+      let or = [];
+      for (let i = 0; i < buildingId.length; i++) {
+        or.push({ buildingId: buildingId[i] });
+      }
+      and.push({ $or: or });
     }
     if (severityStatus !== undefined) {
-      query.severityStatus = severityStatus;
+      and.push({ severityStatus: severityStatus });
     }
     if (fromInspectorId !== undefined) {
-      query.inspectorId = fromInspectorId;
+      and.push({ inspectorId: fromInspectorId });
     }
     if (resolved !== undefined) {
-      query.resolved = resolved;
+      and.push({ resolved: resolved });
     }
+    if (and.length > 0) query.$and = and;
     try {
       const incidents = await IncidentSchema.find(query).exec();
       resolve(incidents.length ?? 0);
