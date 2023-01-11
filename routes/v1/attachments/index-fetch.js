@@ -1,20 +1,28 @@
+/*
+ * GET /{:attachmentId}
+ *   required parameters: attachmentId
+ *   response:
+ *    - 401: unauthorized (e: 7)
+ *    - 404: attachment not found (e: 10)
+ */
+
 // packages
 import { Router } from "express";
-import fs from "fs";
-import util from "util";
 
 // modules
 import {
   unauthorized,
   attachmentNotFound,
-  internalFileReadError,
 } from "../../../modules/responseGenerator.js";
+import {
+  fetchAttachment,
+  isUsingAzureStorage,
+} from "../../../modules/attachment.js";
 
 // models
 import AttachmentSchema from "../../../models/attachment.js";
 
 const router = Router();
-const readFile = util.promisify(fs.readFile);
 
 router.get("/", (req, res) => {
   unauthorized(res);
@@ -22,27 +30,29 @@ router.get("/", (req, res) => {
 
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
-  const token = req.headers.authorization;
   // get attachment
   const attachment = await AttachmentSchema.findOne({ mediaId: id });
   if (attachment === null) {
     attachmentNotFound(res);
     return;
   }
-  const filePath = "attachments/" + id + "." + attachment.mediaExtension;
-  if (!fs.existsSync(filePath)) {
+
+  const data = await fetchAttachment(id, attachment.mediaExtension);
+  if (data === null) {
     attachmentNotFound(res);
-  } else {
-    // open file
-    const file = await readFile(filePath);
-    if (file === null) {
-      internalFileReadError(req, res, err);
-      return;
-    }
-    // send file
-    res.write(file);
-    res.end();
+    return;
   }
+  // send data
+  const contentType = attachment.mediaType + "/" + attachment.mediaExtension;
+  res.setHeader("Content-Type", contentType);
+  console.log("content-type: " + contentType);
+  if (!isUsingAzureStorage()) {
+    res.write(data);
+  } else {
+    // redirect
+    res.redirect(data);
+  }
+  res.end();
 });
 
 export default router;

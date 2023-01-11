@@ -1,6 +1,6 @@
 # Project ACTION
 
-The backend service for a proposed companion service for the BatStateU ACTION Center
+The backend service for a proposed companion service to be used by The BatStateU ACTION Center
 
 ## Getting Started
 
@@ -9,6 +9,7 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
    - [Node.js](https://nodejs.org/en/)
    - [MongoDB](https://www.mongodb.com/)
    - [Curl](https://curl.haxx.se/), [Postman](https://www.getpostman.com/), [Insomnia](https://insomnia.rest/), or other REST clients.
+   - [Azurite](https://github.com/azure/azurite) (Optional for testing only, not needed and should not be used for production.)
 1. Clone the repository.
    ```
    git clone https://github.com/xapier14/action-api.git
@@ -27,16 +28,17 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
    > **Important:**
    > You will need to update the `.env` file with your own values.
 
-   The environment file should look something like this:
+   Your `.env` file should look something like this:
 
    ```
-   DB_CONNECTION=mongodb://<hostname>:27017/action-api
+   DB_CONNECTION="mongodb://<hostname>:27017/action-api"
    PORT=80
-   JWT_SECRT=some-secret-passphrase
+   AZURE_CONNECTION_STRING=""
    ```
 
    > **Note:**
-   > If you are using MongoDB Atlas, just paste the connection string from your dashboard.
+   > If you are using MongoDB Atlas, just paste the connection string from your dashboard and append '/action-api' to specify the database.
+   > If you do not have an Azure subscription to use Azure Blob Storage or have installed Azurite (Azure emulator), leave the field blank to fallback to local storage.
 
 1. Run the `start` script.
    ```
@@ -88,121 +90,23 @@ The backend service for a proposed companion service for the BatStateU ACTION Ce
   - [ ] Delete account
   - [ ] Modify account password
   - [x] Check token
-  - [ ] Logout (delete token)
+  - [x] Logout (delete token)
 - [ ] Incidents
   - [x] Create incident
   - [x] View single incident
   - [x] View all and filter incidents
-  - [ ] Delete incident
+  - [x] Delete incident
   - [ ] Modify incident
 - [ ] Buildings
   - [x] Add building
   - [x] List buildings
-  - [ ] Delete building
+  - [x] Delete building
   - [ ] Modify building
-- [ ] Attachments
+- [x] Attachments
   - [x] Upload attachment
   - [x] Retrieve attachment
-  - [ ] Retrieve all by incident id
-  - [ ] Delete attachment
-
-## Routes
-
-- `/` - static files
-- `/api/v1`
-
-  - `/login` - POST Method
-    | Parameter | Description | Required? |
-    |-|-|-|
-    | `email` | Email of the account | Yes |
-    | `password` | Plain text password | Yes |
-    | `accessLevel` | Requested access level for the session | No, defaults to `0` |
-  - `/signup` - POST Method
-
-    > Requires `accessLevel >= 1`
-
-    | Parameter        | Description                             | Required?           |
-    | ---------------- | --------------------------------------- | ------------------- |
-    | `email`          | Email of the account                    | Yes                 |
-    | `password`       | Plain text password                     | Yes                 |
-    | `firstName`      | First name of the user                  | Yes                 |
-    | `firstName`      | First name of the user                  | Yes                 |
-    | `location`       | Campus/Location designation of the user | Yes                 |
-    | `maxAccessLevel` | Max access level of the new account     | No, defaults to `0` |
-
-  - `/check` - _session token optional_
-
-  - `/incidents` - _requires session token_
-
-    - `/create` - POST Method
-      | Parameter | Description | Required? |
-      |-|-|-|
-      | `inspectedDateTime` | DateTime of incident | Yes |
-      | `location` | Location | Yes |
-      | `buildingId` | Building ID in campus defined by `location` | Yes |
-      | `collapsedStructure` | Evaluation severity number-based enum | Yes |
-      | `leaningOrOutOfPlumb` | Evaluation severity number-based enum | Yes |
-      | `damageToPrimaryStructure` | Evaluation severity number-based enum | Yes |
-      | `fallingHazards` | Evaluation severity number-based enum | Yes |
-      | `groundMovementOrSlope` | Evaluation severity number-based enum | Yes |
-      | `damagedSubmergedFixtures` | Evaluation severity number-based enum | Yes |
-      | `proximityRiskTitle` | Other hazard in close-proximity | No |
-      | `proximityRisk` | Evaluation severity number-based enum | No |
-      | `evaluationComment` | Additional evaluation comment | No |
-      | `estimatedBuildingDamage` | Building damage number-based enum | Yes |
-      | `inspectedPlacard` | Number-based boolean `0/1` | No |
-      | `restrictedPlacard` | Number-based boolean `0/1` | No |
-      | `unsafePlacard` | Number-based boolean `0/1` | No |
-      | `barricadeNeeded` | Number-based boolean `0/1` | No |
-      | `barricadeComment` | Additional comment on barricade | No |
-      | `detailedEvaluationNeeded` | Number-based boolean `0/1` | No |
-      | `detailedEvaluationAreas` | Comma separated list of areas | No |
-      | `otherRecommendations` | Additional recommendations | No |
-      | `furtherComments` | Overall comments on report | No |
-      | `attachments` | Comma separated list of attachment IDs | No |
-    - `/list` - GET Method
-      | Parameter | Description | Required? |
-      |-|-|-|
-      | `location` | Filter by incident location | No. Yes if using `buildingId`. (location filter is only usable if used with `accessLevel >= 1`) |
-      | `buildingId` | Building ID of report | No |
-      | `severityStatus` | General severity status | No |
-      | `inspectorId` | Filter by inspector | No |
-      | `resolved` | Filter by resolved status | No |
-      | `pageOffset` | Zero-based page offset | No |
-      | `limit` | Limit results for pagination | No |
-    - `/delete/{id}` - POST Method
-
-      > Requires `accessLevel >= 1`
-
-      | Parameter  | Description          | Required? |
-      | ---------- | -------------------- | --------- |
-      | `reportId` | The id of the report | Yes       |
-
-  - `/attachments` - _requires session token_
-
-    - `/{id}` - GET Method
-      | Parameter | Description | Required? |
-      |-|-|-|
-      | `id` | Attachment ID | Yes |
-    - `/upload` - POST Method
-      | Parameter | Description | Required? |
-      |-|-|-|
-      | `file` | Attachment data | Yes |
-    - `/delete/{id}` - POST Method
-
-      > Requires `accessLevel >= 1`
-
-      | Parameter | Description                    | Required? |
-      | --------- | ------------------------------ | --------- |
-      | `id`      | The media id of the attachment | Yes       |
-
-    - `/from/{id}` - GET Method
-
-      > Requires `accessLevel >= 1` or incident is owned by the user
-
-      | Parameter | Description | Required? |
-      | --------- | ----------- | --------- |
-      | `id`      | Incident ID | Yes       |
+  - [x] Retrieve all by incident id
+  - [x] Delete attachment
 
 ## License
 

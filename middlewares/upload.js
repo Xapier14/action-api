@@ -15,7 +15,6 @@ import { getAllAllowedMimeTypes } from "../modules/typeCheck.js";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    console.log(file);
     cb(null, STORAGE_PATH);
   },
   filename: (req, file, cb) => {

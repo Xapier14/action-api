@@ -4,6 +4,7 @@ import bodyparser from "body-parser";
 import cors from "cors";
 import readline from "readline";
 import bcrypt from "bcrypt";
+import { useAzureStorage } from "./modules/attachment.js";
 import { revokeAllCreatedSessions } from "./modules/tokens.js";
 import { clearLocalCache } from "./modules/attachment.js";
 import "dotenv/config";
@@ -97,7 +98,14 @@ mongoose.connect(
     });
 
     // express.js, server init
-    app.listen(port, () => {
+    app.listen(port, async () => {
+      // init azure storage
+      if (process.env.AZURE_CONNECTION_STRING !== "") {
+        console.log("Using Azure blob storage...");
+        await useAzureStorage(process.env.AZURE_CONNECTION_STRING);
+      } else {
+        console.log("Azure blob storage not configured");
+      }
       // start command loop
       console.log(`action-api listening on port ${port}`);
       console.log();

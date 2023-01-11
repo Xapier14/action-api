@@ -35,16 +35,6 @@ export function revokeAllCreatedSessions() {
   });
 }
 
-export function verifyJwt(token) {
-  try {
-    if (!jwt.verify(token, process.env.JWT_SECRET)) return false;
-    if (jwt.decode(token).eat < Date.now()) return false;
-    return true;
-  } catch (err) {
-    return false;
-  }
-}
-
 export async function getLocationFromToken(token) {
   const session = await SessionSchema.findOne({ token: token }).exec();
   if (session === null) return null;

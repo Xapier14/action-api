@@ -1,3 +1,11 @@
+/*
+ * GET /from/{:reportId}
+ *   required parameters: reportId
+ *   response:
+ *    - 401: unauthorized (e: 7)
+ *    - 404: incident not found (e: 12)
+ */
+
 // packages
 import { Router } from "express";
 
