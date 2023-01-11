@@ -38,7 +38,7 @@ The backend service for a proposed companion service to be used by The BatStateU
 
    > **Note:**
    > If you are using MongoDB Atlas, just paste the connection string from your dashboard and append '/action-api' to specify the database.
-   > If you do not have an Azure subscription to use Azure Blob Storage or have installed Azurite (Azure emulator), leave the field blank to fallback to local storage.
+   > If you do not have an Azure subscription to use Azure Blob Storage or have not installed Azurite (Azure emulator), leave the field blank to fallback to local storage.
 
 1. Run the `start` script.
    ```
