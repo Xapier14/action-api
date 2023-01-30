@@ -13,6 +13,7 @@
 // packages
 import { Router } from "express";
 import bcrypt from "bcrypt";
+import logger from "../../modules/logging.js";
 
 // middlewares
 import { fields } from "../../middlewares/required.js";
@@ -43,6 +44,14 @@ router.post("/", async (req, res) => {
     // no email OR password doesn't match
     if (user === null || !(await bcrypt.compare(password, user.password))) {
       badLogin(res);
+      logger.log(
+        req.ip,
+        `Bad login attempt. (email: ${email})`,
+        "",
+        "warn",
+        "",
+        "login"
+      );
       return;
     }
 
@@ -53,6 +62,14 @@ router.post("/", async (req, res) => {
         : 0;
     if (accessLevel > user.maxAccessLevel) {
       accessLevelTooHigh(res);
+      logger.log(
+        req.ip,
+        `Insufficient account permissions. (email: ${email})`,
+        "",
+        "warn",
+        user.firstName + "_" + user.lastName,
+        "login"
+      );
       return;
     }
 
@@ -61,11 +78,35 @@ router.post("/", async (req, res) => {
     const token = createSession(user.id, accessLevel);
     if (!token) {
       databaseError(req, res, "Failed to issue session token");
+      logger.log(
+        req.ip,
+        `Failed to issue session token. (email: ${email})`,
+        "",
+        "error",
+        "",
+        "login"
+      );
       return;
     }
     loginSuccess(res, token, user.location);
+    logger.log(
+      req.ip,
+      `Login successful.`,
+      token,
+      "info",
+      user.firstName + "_" + user.lastName,
+      "login"
+    );
   } catch (err) {
     databaseError(req, res, err);
+    logger.log(
+      req.ip,
+      `Database error. (email: ${email})`,
+      "",
+      "error",
+      "",
+      "login"
+    );
   }
 });
 

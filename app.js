@@ -110,7 +110,7 @@ mongoose.connect(
       console.log(`action-api listening on port ${port}`);
       console.log();
       console.log("Type 'exit' to exit");
-      readlineInterface.question("> ", readlineCallback);
+      readlineInterface.question(readlineCallback);
     });
   }
 );

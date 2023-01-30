@@ -17,6 +17,10 @@ const SessionSchema = new Schema({
     default: Date.now,
     expires: "4h",
   },
+  token: {
+    type: String,
+    required: true,
+  },
 });
 
 export default model("Session", SessionSchema);
