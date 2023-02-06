@@ -7,6 +7,12 @@ import {
   buildingNotFound,
   buildingFound,
 } from "../../../modules/responseGenerator.js";
+import {
+  getLocationFromToken,
+  verifySession,
+  getUserIdFromToken,
+} from "../../../modules/tokens.js";
+import logger from "../../../modules/logging.js";
 
 // models
 import BuildingSchema from "../../../models/building.js";
@@ -28,6 +34,23 @@ router.get("/:id", async (req, res) => {
       buildingNotFound(res, id);
       return;
     }
+
+    const userLocation = await getLocationFromToken(token);
+    const userId = await getUserIdFromToken(token);
+    const accessLevel = (await verifySession(token)) ?? 0;
+    if (accessLevel < 1 && building.location !== userLocation) {
+      unauthorized(res);
+      logger.log(
+        req.ip,
+        `Tried to access protected resource without authorization.`,
+        token,
+        "warn",
+        userId,
+        "buildings/fetch"
+      );
+      return;
+    }
+
     // get last incident for building
     try {
       const incident = await IncidentSchema.findOne({ buildingId: id }).sort({
