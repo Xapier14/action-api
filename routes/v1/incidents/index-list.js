@@ -12,12 +12,14 @@ import {
 import {
   sendListOfReports,
   generalInternalError,
+  unauthorized,
 } from "../../../modules/responseGenerator.js";
 import {
   getLocationFromToken,
   verifySession,
   getUserIdFromToken,
 } from "../../../modules/tokens.js";
+import logger from "../../../modules/logging.js";
 
 const router = Router();
 
@@ -25,9 +27,21 @@ const router = Router();
 router.get("/", async (req, res) => {
   const token = req.headers.authorization;
   const userId = await getUserIdFromToken(token);
-
   const accessLevel = (await verifySession(token)) ?? 0;
   const userLocation = await getLocationFromToken(token);
+
+  if (accessLevel < 1 && (req.query.location ?? userLocation) != userLocation) {
+    unauthorized(res);
+    logger.log(
+      req.ip,
+      `Tried to access protected resource without authorization.`,
+      token,
+      "warn",
+      userId,
+      "incidents/fetch"
+    );
+  }
+
   const limit = Math.min(req.query.limit ?? 10, 100);
   const location =
     (accessLevel > 0 ? req.query.location ?? undefined : userLocation)?.split(
