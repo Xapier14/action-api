@@ -12,6 +12,7 @@ import {
   verifySession,
   getUserIdFromToken,
 } from "../../../modules/tokens.js";
+import logger from "../../../modules/logging.js";
 
 // models
 import BuildingSchema from "../../../models/building.js";
@@ -29,6 +30,14 @@ router.get("/", async (req, res) => {
 
   if (location != userLocation && accessLevel < 1) {
     unauthorized(req, res);
+    logger.log(
+      req.ip,
+      `Tried to access protected resource without authorization.`,
+      token,
+      "warn",
+      userId,
+      "buildings/fetch"
+    );
     return;
   }
 
