@@ -7,7 +7,12 @@ import {
   unauthorized,
   incidentNotFound,
 } from "../../../modules/responseGenerator.js";
-import { verifySession, getUserIdFromToken } from "../../../modules/tokens.js";
+import {
+  verifySession,
+  getUserIdFromToken,
+  getLocationFromToken,
+} from "../../../modules/tokens.js";
+import logger from "../../../modules/logging.js";
 
 import IncidentSchema from "../../../models/incident.js";
 import { mustBeAccessLevel } from "../../../middlewares/authorization.js";
@@ -29,6 +34,21 @@ router.patch("/:id", async (req, res) => {
     const incident = await IncidentSchema.findById(id);
     if (!incident) {
       incidentNotFound(res, id);
+      return;
+    }
+    const userLocation = await getLocationFromToken(req.headers.authorization);
+    const userId = await getUserIdFromToken(req.headers.authorization);
+    const accessLevel = (await verifySession(req.headers.authorization)) ?? 0;
+    if (accessLevel < 1 && incident.location !== userLocation) {
+      unauthorized(res);
+      logger.log(
+        req.ip,
+        `Tried to access protected resource without authorization.`,
+        req.headers.authorization,
+        "warn",
+        userId,
+        "incidents/edit"
+      );
       return;
     }
     const {
