@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
   const userLocation = await getLocationFromToken(token);
 
   if (location != userLocation && accessLevel < 1) {
-    unauthorized(req, res);
+    unauthorized(res);
     logger.log(
       req.ip,
       `Tried to access protected resource without authorization.`,
