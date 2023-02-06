@@ -7,6 +7,11 @@ import {
   databaseError,
   sendBuildingList,
 } from "../../../modules/responseGenerator.js";
+import {
+  getLocationFromToken,
+  verifySession,
+  getUserIdFromToken,
+} from "../../../modules/tokens.js";
 
 // models
 import BuildingSchema from "../../../models/building.js";
@@ -15,6 +20,18 @@ const router = Router();
 
 router.get("/", async (req, res) => {
   const location = req.query.location;
+
+  const token = req.headers.authorization;
+  const userId = await getUserIdFromToken(token);
+
+  const accessLevel = (await verifySession(token)) ?? 0;
+  const userLocation = await getLocationFromToken(token);
+
+  if (location != userLocation && accessLevel < 1) {
+    unauthorized(req, res);
+    return;
+  }
+
   // get buildings
   try {
     const query = {};
