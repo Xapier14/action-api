@@ -40,6 +40,7 @@ router.get("/", async (req, res) => {
       userId,
       "incidents/fetch"
     );
+    return;
   }
 
   const limit = Math.min(req.query.limit ?? 10, 100);
