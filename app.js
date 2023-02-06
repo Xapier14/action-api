@@ -9,6 +9,7 @@ import { revokeAllCreatedSessions } from "./modules/tokens.js";
 import { clearLocalCache } from "./modules/attachment.js";
 import "dotenv/config";
 import UserSchama from "./models/user.js";
+import fs from "fs";
 const app = express();
 
 // import routes
@@ -55,6 +56,10 @@ const readlineCallback = function (line) {
     }
   readlineInterface.question("> ", readlineCallback);
 };
+
+if (!fs.existsSync("./localUploadCache")) {
+  fs.mkdirSync("./localUploadCache");
+}
 
 // mongoose, db init
 const port = process.env.PORT || 3000;
