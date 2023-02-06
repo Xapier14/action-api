@@ -14,6 +14,12 @@ import {
   unauthorized,
   incidentNotFound,
 } from "../../../modules/responseGenerator.js";
+import {
+  verifySession,
+  getLocationFromToken,
+  getUserIdFromToken,
+} from "../../../modules/tokens.js";
+import logger from "../../../modules/logging.js";
 
 // models
 import IncidentSchema from "../../../models/incident.js";
@@ -35,6 +41,22 @@ router.get("/:id", async (req, res) => {
     }
   } catch (err) {
     return incidentNotFound(res, incidentId);
+  }
+
+  const userLocation = await getLocationFromToken(req.headers.authorization);
+  const userId = await getUserIdFromToken(req.headers.authorization);
+  const accessLevel = (await verifySession(req.headers.authorization)) ?? 0;
+  if (accessLevel < 1 && incident.location !== userLocation) {
+    unauthorized(res);
+    logger.log(
+      req.ip,
+      `Tried to access protected resource without authorization.`,
+      req.headers.authorization,
+      "warn",
+      userId,
+      "attachments/from-fetch"
+    );
+    return;
   }
 
   // get attachments
