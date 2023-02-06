@@ -21,6 +21,26 @@ router.get("/:id", async (req, res) => {
       incidentNotFound(res, reportId);
       return;
     }
+
+    const token = req.headers.authorization;
+    const userId = await getUserIdFromToken(token);
+
+    const accessLevel = (await verifySession(token)) ?? 0;
+    const userLocation = await getLocationFromToken(token);
+
+    if (incident.location != userLocation && accessLevel < 1) {
+      unauthorized(req, res);
+      logger.log(
+        req.ip,
+        `Tried to access protected resource without authorization.`,
+        token,
+        "warn",
+        userId,
+        "incidents/fetch"
+      );
+      return;
+    }
+
     // send
     incidentFound(res, {
       id: incident.id,
@@ -47,7 +67,10 @@ router.get("/:id", async (req, res) => {
       doNotUse: incident.doNotUse,
       otherRestrictions: incident.otherRestrictions,
       barricadeComment: incident.barricadeComment,
-      detailedEvaluationAreas: removeItemFromArray(incident.detailedEvaluationAreas, ""),
+      detailedEvaluationAreas: removeItemFromArray(
+        incident.detailedEvaluationAreas,
+        ""
+      ),
       otherRecommendations: incident.otherRecommendations,
       furtherComments: incident.furtherComments,
       attachments: incident.attachments,
@@ -68,6 +91,6 @@ function removeItemFromArray(array, item) {
     copy.splice(index, 1);
   }
   return copy;
-};
+}
 
 export default router;
