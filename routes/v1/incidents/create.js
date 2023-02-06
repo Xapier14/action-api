@@ -11,6 +11,8 @@ import {
   incidentReportSuccess,
   buildingNotFound,
 } from "../../../modules/responseGenerator.js";
+import { getLocationFromToken } from "../../../modules/tokens.js";
+import logger from "../../../modules/logging.js";
 
 // models
 import IncidentSchema from "../../../models/incident.js";
@@ -25,6 +27,19 @@ router.post("/", async (req, res) => {
     const session = await SessionSchema.findOne({
       token: req.headers.authorization,
     });
+    const userLocation = await getLocationFromToken(req.headers.authorization);
+    if (session.accessLevel < 1 && userLocation != req.body.location) {
+      unauthorized(req, res);
+      logger.log(
+        req.ip,
+        `Tried to access protected resource without authorization.`,
+        req.headers.authorization,
+        "warn",
+        session.userId,
+        "incidents/create"
+      );
+      return;
+    }
     try {
       const building = await BuildingSchema.findOne({
         _id: req.body.buildingId,
