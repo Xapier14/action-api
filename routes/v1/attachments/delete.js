@@ -19,8 +19,6 @@ import {
   attachmentDeleteSuccess,
 } from "../../../modules/responseGenerator.js";
 import { deleteAttachment } from "../../../modules/attachment.js";
-import { verifySession } from "../../../modules/tokens.js";
-import logger from "../../../modules/logging.js";
 
 // models
 import AttachmentSchema from "../../../models/attachment.js";
@@ -34,19 +32,6 @@ router.post("/", (req, res) => {
 router.post("/:id", async (req, res) => {
   const id = req.params.id;
   const token = req.headers.authorization;
-
-  const accessLevel = (await verifySession(token)) ?? 0;
-  if (accessLevel < 1) {
-    unauthorized(res);
-    logger.log(
-      req.ip,
-      `Tried to access protected resource without authorization.`,
-      token,
-      "warn",
-      "attachments/delete"
-    );
-    return;
-  }
 
   // get attachment
   const attachment = await AttachmentSchema.findOne({ mediaId: id });
