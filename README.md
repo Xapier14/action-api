@@ -4,6 +4,49 @@ The backend service for a proposed companion service to be used by The BatStateU
 
 ## Getting Started
 
+### With Docker
+1. Clone the repository.
+   ```
+   git clone https://github.com/xapier14/action-api.git
+   cd action-api
+   ```
+1. Build the image
+   ```
+   docker build . -t action-api
+   ```
+1. Create the environment file.
+
+   ```
+   cp .env.example .env
+   ```
+
+   > **Important:**
+   > You will need to update the `.env` file with your own values.
+
+   Your `.env` file should look something like this:
+
+   ```
+   DB_CONNECTION=mongodb://<hostname>:27017/action-api
+   PORT=80
+   AZURE_CONNECTION_STRING=<azure-string>
+   ```
+
+   > **Note:**
+   > If you are using MongoDB Atlas, just paste the connection string from your dashboard and append '/action-api' to specify the database.
+   > If you do not have an Azure subscription to use Azure Blob Storage or have not installed Azurite (Azure emulator), leave the field blank to fallback to local storage.
+
+1. Run the image with the env file.
+   ```
+   docker run --expose=3000 -d action-api
+   ```
+
+1. Verify that the container runs at port 3000.
+   ```
+   curl http://127.0.0.1:3000
+   ```
+
+### Normal Install
+
 1. Make sure you have the following prerequisites installed:
    - [Git](https://git-scm.com/)
    - [Node.js](https://nodejs.org/en/)
@@ -31,9 +74,9 @@ The backend service for a proposed companion service to be used by The BatStateU
    Your `.env` file should look something like this:
 
    ```
-   DB_CONNECTION="mongodb://<hostname>:27017/action-api"
+   DB_CONNECTION=mongodb://<hostname>:27017/action-api
    PORT=80
-   AZURE_CONNECTION_STRING=""
+   AZURE_CONNECTION_STRING=<azure-string>
    ```
 
    > **Note:**
