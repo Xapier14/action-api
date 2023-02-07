@@ -37,7 +37,7 @@ The backend service for a proposed companion service to be used by The BatStateU
 
 1. Run the image with the env file.
    ```
-   docker run --expose=3000 -d action-api
+   docker run -p 3000:3000 --env-file .env -d action-api
    ```
 
 1. Verify that the container runs at port 3000.
