@@ -10,6 +10,7 @@ import {
   databaseError,
   incidentReportSuccess,
   buildingNotFound,
+  unauthorized,
 } from "../../../modules/responseGenerator.js";
 import { getLocationFromToken } from "../../../modules/tokens.js";
 import logger from "../../../modules/logging.js";
@@ -29,7 +30,7 @@ router.post("/", async (req, res) => {
     });
     const userLocation = await getLocationFromToken(req.headers.authorization);
     if (session.accessLevel < 1 && userLocation != req.body.location) {
-      unauthorized(req, res);
+      unauthorized(res);
       logger.log(
         req.ip,
         `Tried to access protected resource without authorization.`,

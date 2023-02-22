@@ -3,7 +3,6 @@ import { Router } from "express";
 
 // modules
 import {
-  unauthorized,
   buildingNotFound,
   buildingDeleted,
 } from "../../../modules/responseGenerator.js";
