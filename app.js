@@ -26,6 +26,8 @@ app.use(json());
 app.use("/api/v1", v1);
 app.use("/", express.static("static"));
 
+app.set("trust proxy", true);
+
 const readlineInterface = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
