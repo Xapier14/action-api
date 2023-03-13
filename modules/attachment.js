@@ -125,7 +125,7 @@ function fetchFromAzure(fileName) {
   var startDate = new Date();
   startDate.setMinutes(startDate.getMinutes() - 5);
   var expiryDate = new Date(startDate);
-  expiryDate.setMinutes(startDate.getMinutes() + 60 * 3);
+  expiryDate.setMinutes(startDate.getMinutes() + 60 * 4);
 
   var permissions = azure.BlobUtilities.SharedAccessPermissions.READ;
 
