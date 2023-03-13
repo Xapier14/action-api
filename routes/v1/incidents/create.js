@@ -16,6 +16,7 @@ import { getLocationFromToken } from "../../../modules/tokens.js";
 import logger from "../../../modules/logging.js";
 
 // models
+import AttachmentSchema from "../../../models/attachment.js";
 import IncidentSchema from "../../../models/incident.js";
 import SessionSchema from "../../../models/session.js";
 import BuildingSchema from "../../../models/building.js";
@@ -67,6 +68,17 @@ router.post("/", async (req, res) => {
       1,
       (baseSeverityStatus * 2 + (req.body.estimatedBuildingDamage / 5) * 4) / 4
     );
+    var attachments = [];
+    console.log(req.body.attachments);
+    var attachmentIds = req.body.attachments.split(",");
+    for (var i = 0; i < attachmentIds.length; i++) {
+      if (
+        attachmentIds[i] != "" &&
+        AttachmentSchema.findOne({ _id: attachmentIds[i] } != null)
+      ) {
+        attachments.push(attachmentIds[i]);
+      }
+    }
     const incident = await IncidentSchema.create({
       inspectorId: session.userId,
       inspectedDateTime: req.body.inspectedDateTime,
@@ -89,7 +101,9 @@ router.post("/", async (req, res) => {
       barricadeNeeded: req.body.barricadeNeeded,
       barricadeComment: req.body.barricadeComment,
       detailedEvaluationNeeded: req.body.detailedEvaluationNeeded,
-      detailedEvaluationAreas: req.body.detailedEvaluationAreas.split(","),
+      detailedEvaluationAreas: (req.body.detailedEvaluationAreas ?? "").split(
+        ","
+      ),
       otherRecommendations: req.body.otherRecommendations,
       furtherComments: req.body.furtherComments,
       attachments: req.body.attachments,

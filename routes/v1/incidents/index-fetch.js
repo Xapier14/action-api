@@ -7,6 +7,11 @@ import {
   incidentNotFound,
   incidentFound,
 } from "../../../modules/responseGenerator.js";
+import {
+  getUserIdFromToken,
+  getLocationFromToken,
+  verifySession,
+} from "../../../modules/tokens.js";
 
 // models
 import IncidentSchema from "../../../models/incident.js";
