@@ -62,6 +62,9 @@ const readlineCallback = function (line) {
 if (!fs.existsSync("./localUploadCache")) {
   fs.mkdirSync("./localUploadCache");
 }
+if (!fs.existsSync("./attachments")) {
+  fs.mkdirSync("./attachments");
+}
 
 // mongoose, db init
 const port = process.env.PORT || 3000;
