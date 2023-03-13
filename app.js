@@ -65,6 +65,7 @@ if (!fs.existsSync("./localUploadCache")) {
 
 // mongoose, db init
 const port = process.env.PORT || 3000;
+mongoose.set("strictQuery", false);
 mongoose.connect(
   process.env.DB_CONNECTION,
   {
