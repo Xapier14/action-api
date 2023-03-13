@@ -1,5 +1,6 @@
 import fs, { promises as fsp } from "fs";
 import { BlobServiceClient } from "@azure/storage-blob";
+import azure from "azure-storage";
 import path from "path";
 import { exit } from "process";
 
@@ -8,6 +9,7 @@ const CONTAINER_NAME = "uploaded-attachments";
 
 let connectionString = null;
 let blobServiceClient = null;
+let azureBlobService = null;
 let containterClient = null;
 
 export async function useAzureStorage(azureConnectionString) {
@@ -17,6 +19,7 @@ export async function useAzureStorage(azureConnectionString) {
   }
   connectionString = azureConnectionString;
   blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
+  azureBlobService = azure.createBlobService(connectionString);
   containterClient = blobServiceClient.getContainerClient(CONTAINER_NAME);
   const response = await containterClient.createIfNotExists({
     access: "blob",
@@ -109,11 +112,8 @@ export async function saveAttachment(
   await fsp.unlink(filePath);
 }
 
-async function fetchLocally(attachmentId, attachmentExtension) {
-  const filePath = path.join(
-    LOCAL_ROOT,
-    attachmentId + "." + attachmentExtension
-  );
+async function fetchLocally(fileName) {
+  const filePath = path.join(LOCAL_ROOT, fileName);
   if (!fs.existsSync(filePath)) {
     return null;
   } else {
@@ -121,15 +121,33 @@ async function fetchLocally(attachmentId, attachmentExtension) {
   }
 }
 
-function fetchFromAzure(attachmentId, attachmentExtension) {
-  const blobName = attachmentId + "." + attachmentExtension;
-  const blobClient = containterClient.getBlockBlobClient(blobName);
-  return blobClient.url;
+function fetchFromAzure(fileName) {
+  var startDate = new Date();
+  startDate.setMinutes(startDate.getMinutes() - 5);
+  var expiryDate = new Date(startDate);
+  expiryDate.setMinutes(startDate.getMinutes() + 60 * 3);
+
+  var permissions = azure.BlobUtilities.SharedAccessPermissions.READ;
+
+  var sharedAccessPolicy = {
+    AccessPolicy: {
+      Permissions: permissions,
+      Start: startDate,
+      Expiry: expiryDate,
+    },
+  };
+  var sasToken = azureBlobService.generateSharedAccessSignature(
+    CONTAINER_NAME,
+    fileName,
+    sharedAccessPolicy
+  );
+  var url = azureBlobService.getUrl(CONTAINER_NAME, fileName, sasToken);
+  return url;
 }
 
-export async function fetchAttachment(attachmentId, attachmentExtension) {
+export async function fetchAttachment(fileName) {
   if (isUsingAzureStorage()) {
-    return fetchFromAzure(attachmentId, attachmentExtension);
+    return fetchFromAzure(fileName);
   }
-  return await fetchLocally(attachmentId, attachmentExtension);
+  return await fetchLocally(fileName);
 }

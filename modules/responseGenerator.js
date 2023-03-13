@@ -103,6 +103,12 @@ export function userNotFound(res, id) {
     userId: id,
   });
 }
+export function fileNotFound(res) {
+  res.status(404).send({
+    status: "File not found.",
+    e: 17,
+  });
+}
 
 // server errors
 export function databaseError(req, res, err) {
@@ -280,6 +286,14 @@ export function userResolved(res, userId, firstName, lastName, location) {
       lastName: lastName,
       location: location,
     },
+  });
+}
+export function attachmentFound(res, url, expires) {
+  res.send({
+    status: "Attachment found.",
+    e: 0,
+    url: url,
+    expires: expires,
   });
 }
 
