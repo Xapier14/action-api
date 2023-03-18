@@ -8,6 +8,10 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 COPY package*.json ./
 
+# Install FFMPEG
+RUN apt-get update && apt-get install -y \
+    ffmpeg
+
 # RUN npm install
 # If you are building your code for production
 RUN npm ci --only=production
