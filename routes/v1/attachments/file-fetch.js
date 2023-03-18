@@ -30,7 +30,7 @@ router.get("/", (req, res) => {
 
 router.get("/:fileName", async (req, res) => {
   const fileName = req.params.fileName;
-  const timedAccessToken = req.query.a;
+  const timedAccessToken = req.query.a ?? req.query.access ?? req.query.token;
 
   const taToken = await TimedAccessTokenSchema.findOne({
     file: fileName,

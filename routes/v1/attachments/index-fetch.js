@@ -70,15 +70,11 @@ router.get("/:id", async (req, res) => {
   });
 
   const url =
-    process.env.BASE_URL +
-    "/api/v1/attachments/file/" +
-    fileName +
-    "?" +
-    urlParams.toString();
+    "/api/v1/attachments/file/" + fileName + "?" + urlParams.toString();
 
   const expiresAt = new Date(taToken.createdAt);
   expiresAt.setHours(expiresAt.getHours() + 4);
-  attachmentFound(res, url, expiresAt);
+  attachmentFound(res, fileName, taToken.contentType, taToken.token, expiresAt);
   // const data = await fetchAttachment(id, attachment.mediaExtension);
   // if (data === null) {
   //   attachmentNotFound(res);

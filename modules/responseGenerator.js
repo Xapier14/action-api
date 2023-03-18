@@ -288,11 +288,13 @@ export function userResolved(res, userId, firstName, lastName, location) {
     },
   });
 }
-export function attachmentFound(res, url, expires) {
+export function attachmentFound(res, fileName, contentType, token, expires) {
   res.send({
     status: "Attachment found.",
     e: 0,
-    url: url,
+    fileName: fileName,
+    contentType: contentType,
+    accessToken: token,
     expires: expires,
   });
 }
