@@ -53,6 +53,7 @@ The backend service for a proposed companion service to be used by The BatStateU
    - [MongoDB](https://www.mongodb.com/)
    - [Curl](https://curl.haxx.se/), [Postman](https://www.getpostman.com/), [Insomnia](https://insomnia.rest/), or other REST clients.
    - [Azurite](https://github.com/azure/azurite) (Optional for testing only, not needed and should not be used for production.)
+   - [FFMPEG](https://ffmpeg.org/download.html)
 1. Clone the repository.
    ```
    git clone https://github.com/xapier14/action-api.git
