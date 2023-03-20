@@ -75,9 +75,11 @@ function deleteFromAzure(attachmentId, extension) {
 export function deleteAttachment(attachmentId, extension) {
   if (isUsingAzureStorage()) {
     deleteFromAzure(attachmentId, extension);
+    deleteFromAzure(`${attachmentId}-thumb`, extension);
     return;
   }
   deleteLocally(attachmentId, extension);
+  deleteLocally(`${attachmentId}-thumb`, extension);
 }
 
 async function saveLocally(fileName, filePath) {
