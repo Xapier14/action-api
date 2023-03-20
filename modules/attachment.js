@@ -3,6 +3,7 @@ import { BlobServiceClient } from "@azure/storage-blob";
 import azure from "azure-storage";
 import path from "path";
 import { exit } from "process";
+import { generateThumbnail } from "./ffmpeg.js";
 
 const LOCAL_ROOT = "attachments/";
 const CONTAINER_NAME = "uploaded-attachments";
@@ -10,7 +11,7 @@ const CONTAINER_NAME = "uploaded-attachments";
 let connectionString = null;
 let blobServiceClient = null;
 let azureBlobService = null;
-let containterClient = null;
+let containerClient = null;
 
 export async function useAzureStorage(azureConnectionString) {
   if (connectionString !== null) {
@@ -20,8 +21,8 @@ export async function useAzureStorage(azureConnectionString) {
   connectionString = azureConnectionString;
   blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
   azureBlobService = azure.createBlobService(connectionString);
-  containterClient = blobServiceClient.getContainerClient(CONTAINER_NAME);
-  const response = await containterClient.createIfNotExists({
+  containerClient = blobServiceClient.getContainerClient(CONTAINER_NAME);
+  const response = await containerClient.createIfNotExists({
     access: "blob",
   });
   if (!response.succeeded && response.errorCode !== "ContainerAlreadyExists") {
@@ -35,7 +36,7 @@ export function isUsingAzureStorage() {
   return (
     connectionString !== null &&
     blobServiceClient !== null &&
-    containterClient !== null
+    containerClient !== null
   );
 }
 
@@ -65,7 +66,7 @@ function deleteLocally(attachmentId, extension) {
 
 function deleteFromAzure(attachmentId, extension) {
   const blobName = attachmentId + "." + extension;
-  const blobClient = containterClient.getBlockBlobClient(blobName);
+  const blobClient = containerClient.getBlockBlobClient(blobName);
   blobClient.deleteIfExists({
     deleteSnapshots: "include",
   });
@@ -79,17 +80,16 @@ export function deleteAttachment(attachmentId, extension) {
   deleteLocally(attachmentId, extension);
 }
 
-async function saveLocally(id, mediaType, extension, filePath) {
-  const localPath = LOCAL_ROOT + id + "." + extension;
+async function saveLocally(fileName, filePath) {
+  const localPath = LOCAL_ROOT + fileName;
 
   const readStream = fs.createReadStream(filePath);
   const writeStream = fs.createWriteStream(localPath);
   readStream.pipe(writeStream);
 }
 
-async function saveToAzure(attachmentId, mediaType, extension, filePath) {
-  const blobName = attachmentId + "." + extension;
-  const blobClient = containterClient.getBlockBlobClient(blobName);
+async function saveToAzure(blobName, mediaType, filePath) {
+  const blobClient = containerClient.getBlockBlobClient(blobName);
   await blobClient.uploadFile(filePath);
   const blobHTTPHeaders = {
     blobContentType: mediaType,
@@ -103,13 +103,20 @@ export async function saveAttachment(
   extension,
   filePath
 ) {
+  const thumbnailName = `${attachmentId}-thumb.png`;
+  const blobName = attachmentId + "." + extension;
+  await generateThumbnail(filePath, thumbnailName, 480);
   if (isUsingAzureStorage()) {
-    await saveToAzure(attachmentId, mediaType, extension, filePath);
+    await saveToAzure(blobName, mediaType, filePath);
+    await saveToAzure(thumbnailName, "image/png", thumbnailName);
     await fsp.unlink(filePath);
+    await fsp.unlink(thumbnailName)
     return;
   }
-  await saveLocally(attachmentId, mediaType, extension, filePath);
+  await saveLocally(blobName, filePath);
+  await saveLocally(thumbnailName, thumbnailName);
   await fsp.unlink(filePath);
+  await fsp.unlink(thumbnailName);
 }
 
 async function fetchLocally(fileName) {

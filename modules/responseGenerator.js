@@ -47,7 +47,7 @@ export function tooManyRequests(res) {
     e: 8,
   });
 }
-export function invalidFileupload(res) {
+export function invalidFileUpload(res) {
   res.status(400).send({
     status: "Invalid file upload.",
     e: 9,

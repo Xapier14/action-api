@@ -4,12 +4,15 @@ import bodyparser from "body-parser";
 import cors from "cors";
 import readline from "readline";
 import bcrypt from "bcrypt";
+import "dotenv/config";
+import fs from "fs";
+
+import UserSchema from "./models/user.js";
+
 import { useAzureStorage } from "./modules/attachment.js";
 import { revokeAllCreatedSessions } from "./modules/tokens.js";
 import { clearLocalCache } from "./modules/attachment.js";
-import "dotenv/config";
-import UserSchama from "./models/user.js";
-import fs from "fs";
+import { getFFMPEGVersion, generateThumbnail } from "./modules/ffmpeg.js";
 const app = express();
 
 // import routes
@@ -56,7 +59,7 @@ const readlineCallback = function (line) {
         console.log("Unknown command");
         break;
     }
-  readlineInterface.question("> ", readlineCallback);
+  readlineInterface.question("", readlineCallback);
 };
 
 if (!fs.existsSync("./localUploadCache")) {
@@ -83,14 +86,14 @@ mongoose.connect(
     console.log("Connected to DB");
 
     // check if admin account exists
-    UserSchama.findOne({ email: "admin@g.batstate-u.edu.ph" }, (err, user) => {
+    UserSchema.findOne({ email: "admin@g.batstate-u.edu.ph" }, (err, user) => {
       if (err) {
         console.log("Error checking for admin account");
         console.log(err);
         return;
       }
       if (user === null) {
-        const admin = new UserSchama({
+        const admin = new UserSchema({
           email: "admin@g.batstate-u.edu.ph",
           password: bcrypt.hashSync("Admin123", 10),
           maxAccessLevel: 1,
@@ -117,11 +120,15 @@ mongoose.connect(
       } else {
         console.log("Azure blob storage not configured");
       }
+      
+      // init ffmpeg
+      console.log("FFMPEG version: " + await getFFMPEGVersion());
+      
       // start command loop
       console.log(`action-api listening on port ${port}`);
       console.log();
       console.log("Type 'exit' to exit");
-      readlineInterface.question(readlineCallback);
+      readlineInterface.question("", readlineCallback);
     });
   }
 );

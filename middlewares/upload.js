@@ -10,7 +10,7 @@
 const STORAGE_PATH = "./localUploadCache/";
 
 import multer from "multer";
-import { invalidFileupload } from "../modules/responseGenerator.js";
+import { invalidFileUpload } from "../modules/responseGenerator.js";
 import { getAllAllowedMimeTypes } from "../modules/typeCheck.js";
 
 const storage = multer.diskStorage({
@@ -46,7 +46,7 @@ export function uploadSingle(field) {
     middleware(req, res, (err) => {
       if (err || perFileHandler(req.file)) {
         console.error(err);
-        invalidFileupload(res);
+        invalidFileUpload(res);
         return;
       }
       next();

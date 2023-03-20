@@ -21,6 +21,7 @@ import {
 import { checkMimeType } from "../../../modules/typeCheck.js";
 import { saveAttachment } from "../../../modules/attachment.js";
 import { getUserIdFromToken } from "../../../modules/tokens.js";
+import { generateThumbnail } from "../../../modules/ffmpeg.js";
 
 // models
 import AttachmentSchema from "../../../models/attachment.js";
@@ -50,6 +51,13 @@ router.post("/", uploadSingle("file"), async (req, res) => {
     mediaId: id,
     mediaType: type,
     mediaExtension: extension,
+  });
+  // create attachment object in database
+  const attachmentThumb = await AttachmentSchema.create({
+    uploader: userId,
+    mediaId: id + "-thumb",
+    mediaType: "image",
+    mediaExtension: "png",
   });
   if (attachment === null) {
     databaseError(req, res, err);

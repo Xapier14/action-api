@@ -33,13 +33,18 @@ router.get("/", (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  const id = req.params.id;
+  var id = req.params.id;
   const token = req.headers.authorization;
+  const isThumbnail = req.query.thumbnail ?? false;
 
   const userId = await getUserIdFromToken(token);
   if (userId === null) {
     unauthorized(res);
     return;
+  }
+
+  if (isThumbnail) {
+    id = id + "-thumb";
   }
 
   // get attachment
@@ -75,22 +80,6 @@ router.get("/:id", async (req, res) => {
   const expiresAt = new Date(taToken.createdAt);
   expiresAt.setHours(expiresAt.getHours() + 4);
   attachmentFound(res, fileName, taToken.contentType, taToken.token, expiresAt);
-  // const data = await fetchAttachment(id, attachment.mediaExtension);
-  // if (data === null) {
-  //   attachmentNotFound(res);
-  //   return;
-  // }
-  // // send data
-  // const contentType = attachment.mediaType + "/" + attachment.mediaExtension;
-  // res.setHeader("Content-Type", contentType);
-  // console.log("content-type: " + contentType);
-  // if (!isUsingAzureStorage()) {
-  //   res.write(data);
-  // } else {
-  //   // redirect
-  //   res.redirect(data);
-  // }
-  // res.end();
 });
 
 export default router;
