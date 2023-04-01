@@ -49,7 +49,7 @@ router.get("/", async (req, res) => {
       ","
     ) ?? [];
   const buildingId = req.query.buildingId?.split(",") ?? [];
-  const severityStatus = req.query.severityStatus;
+  const severityStatus = req.query.severityStatus?.split(",") ?? [];
   const inspectorId = accessLevel > 0 ? req.query.inspectorId : undefined;
   const resolved = req.query.resolved;
   const totalReportCount = await countIncidents(

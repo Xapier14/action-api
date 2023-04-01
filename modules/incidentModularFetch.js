@@ -55,8 +55,12 @@ export async function fetchIncidents(
       }
       and.push({ $or: or });
     }
-    if (severityStatus !== undefined) {
-      and.push({ severityStatus: severityStatus });
+    if (severityStatus.length > 0) {
+      let or = [];
+      for (let i = 0; i < severityStatus.length; i++) {
+        or.push({ severityStatus: severityStatus[i] });
+      }
+      and.push({ $or: or });
     }
     if (fromInspectorId !== undefined) {
       and.push({ inspectorId: fromInspectorId });
@@ -122,8 +126,12 @@ export async function countIncidents(
       }
       and.push({ $or: or });
     }
-    if (severityStatus !== undefined) {
-      and.push({ severityStatus: severityStatus });
+    if (severityStatus.length > 0) {
+      let or = [];
+      for (let i = 0; i < severityStatus.length; i++) {
+        or.push({ severityStatus: severityStatus[i] });
+      }
+      and.push({ $or: or });
     }
     if (fromInspectorId !== undefined) {
       and.push({ inspectorId: fromInspectorId });
