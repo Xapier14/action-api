@@ -69,14 +69,15 @@ router.post("/", async (req, res) => {
       (baseSeverityStatus * 2 + (req.body.estimatedBuildingDamage / 5) * 4) / 4
     );
     var attachments = [];
-    console.log(req.body.attachments);
-    var attachmentIds = req.body.attachments.split(",");
-    for (var i = 0; i < attachmentIds.length; i++) {
-      if (
-        attachmentIds[i] != "" &&
-        AttachmentSchema.findOne({ _id: attachmentIds[i] } != null)
-      ) {
-        attachments.push(attachmentIds[i]);
+    if (req.body.attachments != undefined || req.body.attachments != null) {
+      var attachmentIds = req.body.attachments.split(",");
+      for (var i = 0; i < attachmentIds.length; i++) {
+        if (
+          attachmentIds[i] != "" &&
+          AttachmentSchema.findOne({ _id: attachmentIds[i] } != null)
+        ) {
+          attachments.push(attachmentIds[i]);
+        }
       }
     }
     const incident = await IncidentSchema.create({
