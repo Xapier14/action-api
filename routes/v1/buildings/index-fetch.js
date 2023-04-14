@@ -67,6 +67,12 @@ router.get("/:id", async (req, res) => {
         location: building.location,
         maxCapacity: building.maxCapacity,
         otherInformation: building.otherInformation,
+        address: building.address,
+        buildingMarshal: building.buildingMarshal,
+        storyAboveGround: building.storyAboveGround,
+        storyBelowGround: building.storyBelowGround,
+        typeOfConstruction: building.typeOfConstruction,
+        primaryOccupancy: building.primaryOccupancy,
         lastStatus: lastStatus,
         lastInspection: lastInspection,
         lastIncidentId: incident.id,
@@ -77,6 +83,13 @@ router.get("/:id", async (req, res) => {
         name: building.name,
         location: building.location,
         maxCapacity: building.maxCapacity,
+        otherInformation: building.otherInformation,
+        address: building.address,
+        buildingMarshal: building.buildingMarshal,
+        storyAboveGround: building.storyAboveGround,
+        storyBelowGround: building.storyBelowGround,
+        typeOfConstruction: building.typeOfConstruction,
+        primaryOccupancy: building.primaryOccupancy,
       });
     }
   } catch {

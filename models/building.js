@@ -16,6 +16,36 @@ const BuildingSchema = new Schema({
     type: String,
     default: "-n/a-",
   },
+  address: {
+    type: String,
+    default: "-n/a-",
+    required: true,
+  },
+  buildingMarshal: {
+    type: String,
+    default: "-n/a-",
+    required: true,
+  },
+  storyAboveGround: {
+    type: Number,
+    default: 0,
+    required: true,
+  },
+  storyBelowGround: {
+    type: Number,
+    default: 0,
+    required: true,
+  },
+  typeOfConstruction: {
+    type: String,
+    default: "concrete",
+    required: true,
+  },
+  primaryOccupancy: {
+    type: String,
+    default: "offices",
+    required: true,
+  },
 });
 
 export default model("Building", BuildingSchema);

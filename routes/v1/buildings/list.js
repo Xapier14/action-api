@@ -57,6 +57,13 @@ router.get("/", async (req, res) => {
           name: building.name,
           location: building.location,
           maxCapacity: building.maxCapacity,
+          otherInformation: building.otherInformation,
+          address: building.address,
+          buildingMarshal: building.buildingMarshal,
+          storyAboveGround: building.storyAboveGround,
+          storyBelowGround: building.storyBelowGround,
+          typeOfConstruction: building.typeOfConstruction,
+          primaryOccupancy: building.primaryOccupancy,
         };
       })
     );

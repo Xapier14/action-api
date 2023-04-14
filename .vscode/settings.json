@@ -1,12 +1,11 @@
 {
-    "[javascript]": {
-        "editor.tabSize": 2
-    },
-    "[json]": {
-        "editor.tabSize": 2
-    },
-    "cSpell.words": [
-        "bodyparser",
-        "middlewares"
-    ]
+  "[javascript]": {
+    "editor.tabSize": 2
+  },
+  "[json]": {
+    "editor.tabSize": 2
+  },
+  "cSpell.words": ["bodyparser", "middlewares"],
+  "workbench.colorTheme": "Tomorrow Night Blue",
+  "workbench.preferredDarkColorTheme": "Tomorrow Night Blue"
 }

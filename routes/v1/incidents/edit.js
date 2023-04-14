@@ -106,12 +106,17 @@ router.patch("/:id", async (req, res) => {
     if (barricadeComment) incident.barricadeComment = barricadeComment;
     if (detailedEvaluationNeeded)
       incident.detailedEvaluationNeeded = detailedEvaluationNeeded;
-    if (detailedEvaluationAreas)
-      incident.detailedEvaluationAreas = detailedEvaluationAreas;
+    if (detailedEvaluationAreas) {
+      const detailedEvaluationAreasData = detailedEvaluationAreas.split(",");
+      incident.detailedEvaluationAreas = detailedEvaluationAreasData;
+    }
     if (otherRecommendations)
       incident.otherRecommendations = otherRecommendations;
     if (furtherComments) incident.furtherComments = furtherComments;
-    if (attachments) incident.attachments = attachments;
+    if (attachments) {
+      const attachmentsData = attachments.split(",");
+      incident.attachments = attachmentsData;
+    }
     if (resolved) incident.resolved = resolved;
     if (severityStatus) incident.severityStatus = severityStatus;
     await incident.save();
