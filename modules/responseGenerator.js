@@ -109,6 +109,12 @@ export function fileNotFound(res) {
     e: 17,
   });
 }
+export function badCaptcha(res) {
+  res.status(400).send({
+    status: "Invalid captcha response.",
+    e: 18,
+  });
+}
 
 // server errors
 export function databaseError(req, res, err) {

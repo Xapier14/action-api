@@ -24,20 +24,35 @@ import {
   loginSuccess,
   accessLevelTooHigh,
   databaseError,
+  badCaptcha,
 } from "../../modules/responseGenerator.js";
 import { createSession } from "../../modules/tokens.js";
+import { isUsingRecaptcha, verifyTokenAsync } from "../../modules/recaptcha.js";
 
 // models
 import UserSchema from "../../models/user.js";
 
 const router = Router();
 
-router.use(fields(["email", "password"]));
+router.use(fields(["email", "password", "g-recaptcha-token"]));
 router.post("/", async (req, res) => {
   // get email and password fields
   const email = req.body.email?.toLowerCase() ?? "";
   const password = req.body.password;
-
+  const recaptchaToken = req.body["g-recaptcha-token"];
+  const recaptchaResult = await verifyTokenAsync(recaptchaToken, "login");
+  if (isUsingRecaptcha() && recaptchaResult < 0.5) {
+    badCaptcha(res);
+    logger.log(
+      req.ip,
+      `Bad captcha attempt. (email: ${email}) (result: ${recaptchaResult})`,
+      "",
+      "warn",
+      "",
+      "login"
+    );
+    return;
+  }
   try {
     const user = await UserSchema.findOne({ email: email });
 
