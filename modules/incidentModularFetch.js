@@ -141,8 +141,8 @@ export async function countIncidents(
     }
     if (and.length > 0) query.$and = and;
     try {
-      const incidents = await IncidentSchema.find(query).exec();
-      resolve(incidents.length ?? 0);
+      const incidents = await IncidentSchema.countDocuments(query);
+      resolve(incidents);
     } catch (err) {
       console.log(err);
       reject(null);

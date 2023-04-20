@@ -31,7 +31,7 @@ export function countLogs(action, ip, userId) {
   let actions = [];
   let ips = [];
   let userIds = [];
-  if (typeof action === "string") {
+  if (typeof action === "string" && action !== "") {
     let actionsSplit = action.split(",");
     for (let i = 0; i < actionsSplit.length; i++) {
       actions.push(actionsSplit[i]);
@@ -39,7 +39,7 @@ export function countLogs(action, ip, userId) {
   } else {
     actions = action ?? [];
   }
-  if (typeof ip === "string") {
+  if (typeof ip === "string" && ip !== "") {
     let ipsSplit = ip.split(",");
     for (let i = 0; i < ipsSplit.length; i++) {
       ips.push(ipsSplit[i]);
@@ -47,7 +47,7 @@ export function countLogs(action, ip, userId) {
   } else {
     ips = ip ?? [];
   }
-  if (typeof userId === "string") {
+  if (typeof userId === "string" && userId !== "") {
     let userIdsSplit = userId.split(",");
     for (let i = 0; i < userIdsSplit.length; i++) {
       userIds.push(userIdsSplit[i]);
@@ -81,7 +81,7 @@ export function countLogs(action, ip, userId) {
     }
     if (and.length > 0) query.$and = and;
     try {
-      const logs = await LogSchema.countDocuments(query).exec();
+      const logs = await LogSchema.countDocuments(query);
       resolve(logs);
     } catch (err) {
       console.log(err);
