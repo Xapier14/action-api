@@ -82,7 +82,7 @@ router.post("/", async (req, res) => {
         `Insufficient account permissions. (email: ${email})`,
         "",
         "warn",
-        user.firstName + "_" + user.lastName,
+        user.id,
         "login"
       );
       return;
@@ -98,20 +98,13 @@ router.post("/", async (req, res) => {
         `Failed to issue session token. (email: ${email})`,
         "",
         "error",
-        "",
+        user.id,
         "login"
       );
       return;
     }
     loginSuccess(res, token, user.location);
-    logger.log(
-      req.ip,
-      `Login successful.`,
-      token,
-      "info",
-      user.firstName + "_" + user.lastName,
-      "login"
-    );
+    logger.log(req.ip, `Login successful.`, token, "info", user.id, "login");
   } catch (err) {
     databaseError(req, res, err);
     logger.log(

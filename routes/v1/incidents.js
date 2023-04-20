@@ -19,6 +19,6 @@ router.use("", fetch);
 router.use("/edit", edit);
 router.use("/create", create);
 router.use("/detail", detail);
-router.use("/delete", $delete);
+router.use("/", $delete);
 
 export default router;
