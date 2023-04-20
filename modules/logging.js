@@ -32,19 +32,28 @@ export function countLogs(action, ip, userId) {
   let ips = [];
   let userIds = [];
   if (typeof action === "string") {
-    actions.push(action);
+    let actionsSplit = action.split(",");
+    for (let i = 0; i < actionsSplit.length; i++) {
+      actions.push(actionsSplit[i]);
+    }
   } else {
-    actions = action;
+    actions = action ?? [];
   }
   if (typeof ip === "string") {
-    ips.push(ip);
+    let ipsSplit = ip.split(",");
+    for (let i = 0; i < ipsSplit.length; i++) {
+      ips.push(ipsSplit[i]);
+    }
   } else {
-    ips = ip;
+    ips = ip ?? [];
   }
   if (typeof userId === "string") {
-    userIds.push(userId);
+    let userIdsSplit = userId.split(",");
+    for (let i = 0; i < userIdsSplit.length; i++) {
+      userIds.push(userIdsSplit[i]);
+    }
   } else {
-    userIds = userId;
+    userIds = userId ?? [];
   }
   return new Promise(async (resolve, reject) => {
     const query = {};
@@ -82,27 +91,54 @@ export function countLogs(action, ip, userId) {
 }
 
 export async function fetchLogs(pageOffset, limit, action, ip, userId) {
+  let actions = [];
+  let ips = [];
+  let userIds = [];
+  if (typeof action === "string" && action !== "") {
+    let actionsSplit = action.split(";");
+    for (let i = 0; i < actionsSplit.length; i++) {
+      actions.push(actionsSplit[i]);
+    }
+  } else {
+    actions = action ?? [];
+  }
+  if (typeof ip === "string" && ip !== "") {
+    let ipsSplit = ip.split(";");
+    for (let i = 0; i < ipsSplit.length; i++) {
+      ips.push(ipsSplit[i]);
+    }
+  } else {
+    ips = ip ?? [];
+  }
+  if (typeof userId === "string" && userId !== "") {
+    let userIdsSplit = userId.split(";");
+    for (let i = 0; i < userIdsSplit.length; i++) {
+      userIds.push(userIdsSplit[i]);
+    }
+  } else {
+    userIds = userId ?? [];
+  }
   return new Promise(async (resolve, reject) => {
     const query = {};
     let and = [];
-    if (action.length > 0) {
+    if (actions.length > 0) {
       let or = [];
-      for (let i = 0; i < action.length; i++) {
-        or.push({ action: action[i] });
+      for (let i = 0; i < actions.length; i++) {
+        or.push({ action: actions[i] });
       }
       and.push({ $or: or });
     }
-    if (ip.length > 0) {
+    if (ips.length > 0) {
       let or = [];
-      for (let i = 0; i < ip.length; i++) {
-        or.push({ sourceIp: ip[i] });
+      for (let i = 0; i < ips.length; i++) {
+        or.push({ sourceIp: ips[i] });
       }
       and.push({ $or: or });
     }
-    if (userId.length > 0) {
+    if (userIds.length > 0) {
       let or = [];
-      for (let i = 0; i < userId.length; i++) {
-        or.push({ userId: userId[i] });
+      for (let i = 0; i < userIds.length; i++) {
+        or.push({ userId: userIds[i] });
       }
       and.push({ $or: or });
     }
