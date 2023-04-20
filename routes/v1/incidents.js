@@ -7,6 +7,7 @@ import list from "./incidents/index-list.js";
 import fetch from "./incidents/index-fetch.js";
 import edit from "./incidents/edit.js";
 import detail from "./incidents/detail.js";
+import $delete from "./incidents/delete.js";
 
 const router = Router();
 router.use(needsAuthentication);
@@ -18,5 +19,6 @@ router.use("", fetch);
 router.use("/edit", edit);
 router.use("/create", create);
 router.use("/detail", detail);
+router.use("/delete", $delete);
 
 export default router;

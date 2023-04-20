@@ -276,6 +276,12 @@ export function incidentFound(res, incident) {
     incident: incident,
   });
 }
+export function incidentDeleted(res) {
+  res.send({
+    status: "Incident deleted.",
+    e: 0,
+  });
+}
 export function buildingFound(res, building) {
   res.send({
     status: "Building found.",
