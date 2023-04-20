@@ -5,6 +5,7 @@ The backend service for a proposed companion service to be used by The BatStateU
 ## Getting Started
 
 ### With Docker
+
 1. Clone the repository.
    ```
    git clone https://github.com/xapier14/action-api.git
@@ -29,6 +30,8 @@ The backend service for a proposed companion service to be used by The BatStateU
    DB_CONNECTION=mongodb://<hostname>:27017/action-api
    PORT=80
    AZURE_CONNECTION_STRING=<azure-string>
+   GOOGLE_CLOUD_PROJECT=<gcloud-project-name>
+   RECAPTCHA_SITE_KEY=<gcloud-enterprise-site-key>
    ```
 
    > **Note:**
@@ -36,6 +39,7 @@ The backend service for a proposed companion service to be used by The BatStateU
    > If you do not have an Azure subscription to use Azure Blob Storage or have not installed Azurite (Azure emulator), leave the field blank to fallback to local storage.
 
 1. Run the image with the env file.
+
    ```
    docker run -p 3000:3000 --env-file .env -d action-api
    ```
@@ -51,7 +55,6 @@ The backend service for a proposed companion service to be used by The BatStateU
    - [Git](https://git-scm.com/)
    - [Node.js](https://nodejs.org/en/)
    - [MongoDB](https://www.mongodb.com/)
-   - [Curl](https://curl.haxx.se/), [Postman](https://www.getpostman.com/), [Insomnia](https://insomnia.rest/), or other REST clients.
    - [Azurite](https://github.com/azure/azurite) (Optional for testing only, not needed and should not be used for production.)
    - [FFMPEG](https://ffmpeg.org/download.html)
 1. Clone the repository.
@@ -97,34 +100,10 @@ The backend service for a proposed companion service to be used by The BatStateU
    ```
 
    This account holds an access level of `1`.
-   Login to the API using the credentials above via the `/api/v1/login` endpoint.
+   Login using the credentials above via the `action-dashboard` client.
 
-   ```
-   curl -X POST -H "Content-Type: application/json" -d '{"email": admin@g.batstate-u.edu.ph, "password": Admin123, "accessLevel": 1}' http://localhost:80/api/v1/login
-   ```
-
-   If not supplied with an access level, the API will default to `0`.
-
-   Sample response:
-
-   ```json
-   {
-     "status": "Login successful.",
-     "e": 0,
-     "token": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-   }
-   ```
-
-   You can then use the returned `token` to access the other endpoints.
-
-1. Create other accounts via the `/api/v1/signup` endpoint.
-   This requires an `token` with an `accessLevel` of `1` or higher.
-   ```
-   curl -X POST -H "Content-Type: application/json" -H "Authorization: <token>" -d '{"email": <email-of-new-user>, "password": <password-of-new-user>}' http://localhost:80/api/v1/signup
-   ```
-   Supply a `maxAccessLevel` parameter to limit the maximum access level of the new user.
-   If not supplied, the new user will have an access level of `0`.
-1. Change the password of the admin account to something more secure.
+   > **Note:**
+   > The `action-dashboard` client has different environment variables depending on the configuration. The default configuration is for a local development environment. If you are running the API on a different port, you will need to update the `apiHost` variable in [environment.ts](action-dashboard/src/environments/environment.ts).
 
 ## Progress
 

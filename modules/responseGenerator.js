@@ -214,6 +214,27 @@ export function sendListOfReports(
     token: token,
   });
 }
+export function sendLogs(
+  res,
+  token,
+  logs,
+  pageOffset,
+  maxPageOffset,
+  limit,
+  totalLogCount
+) {
+  res.send({
+    status: `Retrieved page ${pageOffset} of ${maxPageOffset} with ${logs.length} log(s).`,
+    e: 0,
+    pageOffset: pageOffset,
+    maxPageOffset: maxPageOffset,
+    limit: limit,
+    logs: logs,
+    logCount: logs.length,
+    totalLogCount: totalLogCount,
+    token: token,
+  });
+}
 export function sendAccountsCount(res, count, location) {
   if (location == undefined) {
     res.send({
