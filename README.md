@@ -81,6 +81,9 @@ The backend service for a proposed companion service to be used by The BatStateU
    DB_CONNECTION=mongodb://<hostname>:27017/action-api
    PORT=80
    AZURE_CONNECTION_STRING=<azure-string>
+   AZURE_CONNECTION_STRING=<azure-string>
+   GOOGLE_CLOUD_PROJECT=<gcloud-project-name>
+   RECAPTCHA_SITE_KEY=<gcloud-enterprise-site-key>
    ```
 
    > **Note:**
