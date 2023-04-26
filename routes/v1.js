@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import rateLimiter from "../middlewares/rateLimiter.js";
+import routeLogger from "../middlewares/routeLogger.js";
 
 // routes
 import login from "./v1/login.js";
@@ -16,6 +17,7 @@ import logs from "./v1/logs.js";
 const router = Router();
 
 router.use(rateLimiter);
+router.use(routeLogger);
 router.use("/login", login);
 router.use("/logout", logout);
 router.use("/signup", signup);

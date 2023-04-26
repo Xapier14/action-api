@@ -12,12 +12,12 @@ import UserSchema from "./models/user.js";
 import { useAzureStorage } from "./modules/attachment.js";
 import { revokeAllCreatedSessions } from "./modules/tokens.js";
 import { clearLocalCache } from "./modules/attachment.js";
-import { getFFMPEGVersion, generateThumbnail } from "./modules/ffmpeg.js";
+import { getFFMPEGVersion } from "./modules/ffmpeg.js";
 const app = express();
 
 // import routes
 import v1 from "./routes/v1.js";
-import { useRecaptchaAsync } from "./modules/recaptcha.js";
+import { useRecaptcha } from "./modules/recaptcha.js";
 
 // middlewares
 app.use(
@@ -126,7 +126,7 @@ mongoose.connect(
         console.log("Azure blob storage not configured");
       }
 
-      await useRecaptchaAsync(siteKey, apiKey, googleCloudProjectId);
+      useRecaptcha(siteKey, apiKey, googleCloudProjectId);
 
       // init ffmpeg
       console.log("FFMPEG version: " + (await getFFMPEGVersion()));

@@ -43,15 +43,15 @@ router.get("/:id", async (req, res) => {
     return;
   }
 
-  if (isThumbnail) {
-    id = id + "-thumb";
-  }
-
   // get attachment
   const attachment = await AttachmentSchema.findOne({ mediaId: id });
   if (attachment === null) {
     attachmentNotFound(res);
     return;
+  }
+
+  if (isThumbnail) {
+    id = id + "-thumb";
   }
 
   const fileName = id + "." + attachment.mediaExtension;
@@ -73,9 +73,6 @@ router.get("/:id", async (req, res) => {
   const urlParams = new URLSearchParams({
     a: taToken.token,
   });
-
-  const url =
-    "/api/v1/attachments/file/" + fileName + "?" + urlParams.toString();
 
   const expiresAt = new Date(taToken.createdAt);
   expiresAt.setHours(expiresAt.getHours() + 4);

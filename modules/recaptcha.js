@@ -4,7 +4,7 @@ let $siteKey = "";
 let $apiKey = "";
 let $projectId = "";
 
-export function useRecaptchaAsync(siteKey, apiKey, projectId) {
+export function useRecaptcha(siteKey, apiKey, projectId) {
   $siteKey = siteKey;
   $projectId = projectId;
   $apiKey = apiKey;
