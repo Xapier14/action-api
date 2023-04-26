@@ -1,39 +1,53 @@
-import { RecaptchaEnterpriseServiceClient } from "@google-cloud/recaptcha-enterprise";
+import fetch from "node-fetch";
 
-let siteKey = "";
-let projectId = "";
-let recaptchaClient = null;
+let $siteKey = "";
+let $apiKey = "";
+let $projectId = "";
 
-export function useRecaptchaAsync(siteKey, projectId) {
-  if (recaptchaClient !== null) {
-    console.log("Recaptcha already in use");
-    return;
-  }
-  siteKey = siteKey;
-  projectId = projectId;
-  recaptchaClient = new RecaptchaEnterpriseServiceClient();
-  recaptchaClient.projectPath(projectId);
+export function useRecaptchaAsync(siteKey, apiKey, projectId) {
+  $siteKey = siteKey;
+  $projectId = projectId;
+  $apiKey = apiKey;
+  console.log("Using ReCaptcha...");
 }
-
 export function isUsingRecaptcha() {
-  return recaptchaClient !== null;
+  return $siteKey !== "" && $apiKey !== "" && $projectId !== "";
+}
+async function createAssessment(token, action) {
+  const format = `https://recaptchaenterprise.googleapis.com/v1/projects/${$projectId}/assessments`;
+  // build query
+  const rawQuery = {
+    key: $apiKey,
+  };
+  // uri encode query
+  const query = Object.keys(rawQuery)
+    .map((key) => `${key}=${encodeURIComponent(rawQuery[key])}`)
+    .join("&");
+  // build request
+  const request = {
+    event: {
+      token: token,
+      siteKey: $siteKey,
+      expectedAction: action,
+    },
+  };
+  // send request
+  const response = await fetch(`${format}?${query}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(request),
+  });
+
+  return response.json();
 }
 
 export async function verifyTokenAsync(token, action) {
   if (!isUsingRecaptcha()) {
     return -1.0;
   }
-  const request = {
-    assessment: {
-      event: {
-        token: token,
-        siteKey: siteKey,
-      },
-      parent: projectId,
-    },
-  };
-
-  const [response] = await recaptchaClient.createAssessment(request);
+  const response = await createAssessment(token, action);
 
   if (!response.tokenProperties.valid) {
     console.log(
@@ -47,5 +61,5 @@ export async function verifyTokenAsync(token, action) {
     return -3.0;
   }
 
-  return response?.riskAnalysis?.reasons ?? -4.0;
+  return response?.riskAnalysis?.score ?? -4.0;
 }

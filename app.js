@@ -17,6 +17,7 @@ const app = express();
 
 // import routes
 import v1 from "./routes/v1.js";
+import { useRecaptchaAsync } from "./modules/recaptcha.js";
 
 // middlewares
 app.use(
@@ -71,6 +72,10 @@ if (!fs.existsSync("./attachments")) {
 
 // mongoose, db init
 const port = process.env.PORT || 3000;
+const siteKey = process.env.RECAPTCHA_SITE_KEY;
+const apiKey = process.env.GOOGLE_CLOUD_API_KEY;
+const googleCloudProjectId = process.env.GOOGLE_CLOUD_PROJECT_ID;
+
 mongoose.set("strictQuery", false);
 mongoose.connect(
   process.env.DB_CONNECTION,
@@ -120,10 +125,12 @@ mongoose.connect(
       } else {
         console.log("Azure blob storage not configured");
       }
-      
+
+      await useRecaptchaAsync(siteKey, apiKey, googleCloudProjectId);
+
       // init ffmpeg
-      console.log("FFMPEG version: " + await getFFMPEGVersion());
-      
+      console.log("FFMPEG version: " + (await getFFMPEGVersion()));
+
       // start command loop
       console.log(`action-api listening on port ${port}`);
       console.log();

@@ -1,5 +1,9 @@
 import LogSchema from "../models/log.js";
 
+function min(a, b) {
+  return a < b ? a : b;
+}
+
 export async function log(
   sourceIp,
   message,
@@ -12,7 +16,10 @@ export async function log(
   console.log(
     `[${dateTime.toISOString()}] [${level}] [${sourceIp}] [${message}]`
   );
-  const maskedSessionId = sessionId ? sessionId.slice(0, 5) + "..." : "";
+  const visibleLength = 32;
+  const maskedSessionId = sessionId
+    ? sessionId.slice(0, min(visibleLength, sessionId.length - 8)) + "..."
+    : "";
   await LogSchema.create({
     sourceIp: sourceIp,
     dateTime: dateTime,

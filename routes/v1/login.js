@@ -104,7 +104,14 @@ router.post("/", async (req, res) => {
       return;
     }
     loginSuccess(res, token, user.location);
-    logger.log(req.ip, `Login successful.`, token, "info", user.id, "login");
+    logger.log(
+      req.ip,
+      `Login successful. Captcha Score: ${recaptchaResult}`,
+      token,
+      "info",
+      user.id,
+      "login"
+    );
   } catch (err) {
     databaseError(req, res, err);
     logger.log(

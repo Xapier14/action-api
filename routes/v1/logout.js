@@ -20,14 +20,7 @@ router.post("/", async (req, res) => {
     return;
   }
   session.remove();
-  logging.log(
-    req.ip,
-    "Logged out",
-    session.token,
-    "info",
-    user.firstName + "_" + user.lastName,
-    "logout"
-  );
+  logging.log(req.ip, "Logged out", session.token, "info", user.id, "logout");
   logoutSuccess(res);
 });
 
