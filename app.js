@@ -6,6 +6,7 @@ import readline from "readline";
 import bcrypt from "bcrypt";
 import "dotenv/config";
 import fs from "fs";
+import logging from "./modules/logging.js";
 
 import UserSchema from "./models/user.js";
 
@@ -118,6 +119,19 @@ mongoose.connect(
 
     // express.js, server init
     app.listen(port, async () => {
+      // generate instance id
+      const instanceId =
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15);
+      const envConfig = process.env.ENV_CONFIG ?? "production";
+      logging.log(
+        "n/a",
+        `[${instanceId}] Instance started initialization routine. (config: ${envConfig})`,
+        "",
+        "system",
+        "",
+        "init"
+      );
       // init azure storage
       if (process.env.AZURE_CONNECTION_STRING !== "") {
         console.log("Using Azure blob storage...");
@@ -129,10 +143,27 @@ mongoose.connect(
       useRecaptcha(siteKey, apiKey, googleCloudProjectId);
 
       // init ffmpeg
-      console.log("FFMPEG version: " + (await getFFMPEGVersion()));
+      const ffmpegVersion = await getFFMPEGVersion();
+      console.log("FFMPEG version: " + ffmpegVersion);
+      logging.log(
+        "n/a",
+        `[${instanceId}] FFMPEG: ${ffmpegVersion}`,
+        "",
+        "system",
+        "",
+        "init"
+      );
 
       // start command loop
       console.log(`action-api listening on port ${port}`);
+      logging.log(
+        "n/a",
+        `[${instanceId}] Instance initialized`,
+        "",
+        "system",
+        "",
+        "init"
+      );
       console.log();
       console.log("Type 'exit' to exit");
       readlineInterface.question("", readlineCallback);

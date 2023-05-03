@@ -80,6 +80,13 @@ export function buildingNotFound(res, id) {
     buildingId: id,
   });
 }
+export function accountNotFound(res, id) {
+  res.status(404).send({
+    status: "Account not found.",
+    e: 13,
+    accountId: id,
+  });
+}
 export function parameterOutOfRange(res, parameter, min, max) {
   res.status(400).send({
     status: "Parameter out of range.",
@@ -113,6 +120,24 @@ export function badCaptcha(res) {
   res.status(400).send({
     status: "Invalid captcha response.",
     e: 18,
+  });
+}
+export function accountIsLocked(res) {
+  res.status(403).send({
+    status: "Account is locked.",
+    e: 19,
+  });
+}
+export function invalidPassword(res) {
+  res.status(400).send({
+    status: "Invalid password.",
+    e: 20,
+  });
+}
+export function mustNotBeCurrentAccount(res) {
+  res.status(400).send({
+    status: "Must not be current account.",
+    e: 21,
   });
 }
 
@@ -238,14 +263,14 @@ export function sendLogs(
 export function sendAccountsCount(res, count, location) {
   if (location == undefined) {
     res.send({
-      status: "Counted accounts",
+      status: "Counted accounts.",
       e: 0,
       count: count,
     });
     return;
   }
   res.send({
-    status: "Counted accounts",
+    status: "Counted accounts.",
     e: 0,
     count: count,
     location: location,
@@ -254,7 +279,7 @@ export function sendAccountsCount(res, count, location) {
 export function sendReportsCount(res, count, location, building) {
   if (building == undefined) {
     res.send({
-      status: "Counted reports",
+      status: "Counted reports.",
       e: 0,
       location: location,
       count: count,
@@ -262,11 +287,17 @@ export function sendReportsCount(res, count, location, building) {
     return;
   }
   res.send({
-    status: "Counted reports",
+    status: "Counted reports.",
     e: 0,
     location: location,
     buildingId: building,
     count: count,
+  });
+}
+export function passwordChanged(res) {
+  res.send({
+    status: "Password changed.",
+    e: 0,
   });
 }
 export function incidentFound(res, incident) {
@@ -289,9 +320,23 @@ export function buildingFound(res, building) {
     building: building,
   });
 }
+export function accountFound(res, account) {
+  res.send({
+    status: "Account found.",
+    e: 0,
+    account: account,
+  });
+}
 export function buildingAdded(res, id) {
   res.send({
     status: "Building added.",
+    e: 0,
+    buildingId: id,
+  });
+}
+export function buildingEdited(res, id) {
+  res.send({
+    status: "Building edited.",
     e: 0,
     buildingId: id,
   });
@@ -302,6 +347,18 @@ export function buildingDeleted(res) {
     e: 0,
   });
 }
+export function accountDeleted(res) {
+  res.send({
+    status: "Account deleted.",
+    e: 0,
+  });
+}
+export function accountUnlocked(res) {
+  res.send({
+    status: "Account unlocked.",
+    e: 0,
+  });
+}
 export function sendBuildingList(res, location, buildings) {
   res.send({
     status: `Buildings from '${location}' retrieved.`,
@@ -309,9 +366,22 @@ export function sendBuildingList(res, location, buildings) {
     buildings: buildings,
   });
 }
-export function userResolved(res, userId, firstName, lastName, location) {
+export function sendAccountList(res, location, accounts) {
   res.send({
-    status: "User resolved.",
+    status: `Accounts from '${location}' retrieved.`,
+    e: 0,
+    accounts: accounts,
+  });
+}
+export function accountNameResolved(
+  res,
+  userId,
+  firstName,
+  lastName,
+  location
+) {
+  res.send({
+    status: "Account name resolved.",
     e: 0,
     userId: userId,
     user: {

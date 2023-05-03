@@ -28,6 +28,18 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  isLocked: {
+    type: Boolean,
+    default: false,
+  },
+  badLoginAttempts: {
+    type: Number,
+    default: 0,
+  },
+  lastLocked: {
+    type: Date,
+    default: null,
+  },
 });
 
 export default model("User", UserSchema);

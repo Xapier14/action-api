@@ -29,7 +29,7 @@ router.post("/", (req, res) => {
   unauthorized(res);
 });
 
-router.post("/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   const id = req.params.id;
   const token = req.headers.authorization;
 

@@ -5,6 +5,9 @@
  * Limits the number of requests per time period
  * for unauthorized and authorized users
  *
+ * To make this scale, we would need to use a database
+ * to store the requests and their counts
+ *
  * Requires 'tokens.js' and 'responseGenerator.js'
  */
 

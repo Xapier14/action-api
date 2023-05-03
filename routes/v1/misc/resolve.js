@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import {
-  userResolved,
+  accountNameResolved,
   userNotFound,
 } from "../../../modules/responseGenerator.js";
 
@@ -19,7 +19,13 @@ router.get("/", async (req, res) => {
     if (!user) {
       return userNotFound(res, id);
     }
-    return userResolved(res, id, user.firstName, user.lastName, user.location);
+    return accountNameResolved(
+      res,
+      id,
+      user.firstName,
+      user.lastName,
+      user.location
+    );
   } catch (err) {
     return userNotFound(res, id);
   }

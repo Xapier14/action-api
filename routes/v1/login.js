@@ -25,6 +25,7 @@ import {
   accessLevelTooHigh,
   databaseError,
   badCaptcha,
+  accountIsLocked,
 } from "../../modules/responseGenerator.js";
 import { createSession } from "../../modules/tokens.js";
 import { isUsingRecaptcha, verifyTokenAsync } from "../../modules/recaptcha.js";
@@ -67,6 +68,29 @@ router.post("/", async (req, res) => {
         "",
         "login"
       );
+      // increment failed login attempts
+      if (user !== null) {
+        user.badLoginAttempts++;
+        if (user.badLoginAttempts >= 5) {
+          user.isLocked = true;
+          user.lastLocked = Date.now();
+        }
+        await user.save();
+      }
+      return;
+    }
+
+    // check if account is locked
+    if (user.isLocked) {
+      accountIsLocked(res);
+      logger.log(
+        req.ip,
+        `Account is locked. (email: ${email})`,
+        "",
+        "warn",
+        user.id,
+        "login"
+      );
       return;
     }
 
@@ -88,7 +112,7 @@ router.post("/", async (req, res) => {
       return;
     }
 
-    // authentication successful, create jwt token
+    // authentication successful
     // create new session token
     const token = createSession(user.id, accessLevel);
     if (!token) {
