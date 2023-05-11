@@ -16,7 +16,8 @@ import BuildingSchema from "../../../models/building.js";
 const router = Router();
 
 //router.use("/", fields(["name", "location", "maxCapacity"]));
-router.post("/", async (req, res) => {
+router.post("/:{io}", async (req, res) => {
+  const id = req.params.id;
   try {
     const building = await BuildingSchema.findOne({ id });
     if (building === null) {

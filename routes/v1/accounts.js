@@ -8,6 +8,7 @@ import deletePost from "./accounts/delete.js";
 import fetch from "./accounts/index-fetch.js";
 import list from "./accounts/list.js";
 import unlock from "./accounts/unlock.js";
+import lock from "./accounts/lock.js";
 
 const router = Router();
 router.use(needsAuthentication);
@@ -21,6 +22,8 @@ router.use("/list", mustBeAccessLevel(1));
 router.use("/list", list);
 router.use("/unlock", mustBeAccessLevel(1));
 router.use("/unlock", unlock);
+router.use("/lock", mustBeAccessLevel(1));
+router.use("/lock", lock);
 
 router.use(fetch);
 

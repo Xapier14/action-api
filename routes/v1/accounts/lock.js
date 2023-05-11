@@ -4,7 +4,7 @@ import { Router } from "express";
 // modules
 import {
   unauthorized,
-  accountUnlocked,
+  accountLocked,
   accountNotFound,
 } from "../../../modules/responseGenerator.js";
 import logging from "../../../modules/logging.js";
@@ -29,18 +29,17 @@ router.post("/:id", async (req, res) => {
       accountNotFound(res, id);
       return;
     }
-    user.isLocked = false;
-    user.badLoginAttempts = 0;
+    user.isLocked = true;
+    user.lastLocked = new Date();
     await user.save();
-    accountUnlocked(res);
-
+    accountLocked(res);
     logging.log(
       req.ip,
-      `Account unlocked. (email: ${user.email})`,
+      `Account locked. (email: ${user.email})`,
       token,
       "admin",
       user.id,
-      "unlockAccount"
+      "lockAccount"
     );
   } catch {
     accountNotFound(res, id);

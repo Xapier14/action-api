@@ -359,6 +359,18 @@ export function accountUnlocked(res) {
     e: 0,
   });
 }
+export function accountLocked(res) {
+  res.send({
+    status: "Account locked.",
+    e: 0,
+  });
+}
+export function accountEdited(res) {
+  res.send({
+    status: "Account edited.",
+    e: 0,
+  });
+}
 export function sendBuildingList(res, location, buildings) {
   res.send({
     status: `Buildings from '${location}' retrieved.`,

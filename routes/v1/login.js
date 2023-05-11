@@ -99,7 +99,7 @@ router.post("/", async (req, res) => {
       req.body.accessLevel && req.body.accessLevel >= 0
         ? req.body.accessLevel
         : 0;
-    if (accessLevel > user.maxAccessLevel) {
+    if (accessLevel > (user.maxAccessLevel ?? 0)) {
       accessLevelTooHigh(res);
       logger.log(
         req.ip,

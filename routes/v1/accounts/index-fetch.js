@@ -37,7 +37,7 @@ router.get("/:id", async (req, res) => {
       lastName: user.lastName,
       email: user.email,
       location: user.location,
-      maxAccessLevel: user.maxAccessLevel,
+      maxAccessLevel: user.maxAccessLevel ?? 0,
       createdAt: user.createdAt,
       isLocked: user.isLocked,
       lastLocked: user.lastLocked,
