@@ -107,7 +107,7 @@ router.post("/", async (req, res) => {
       ),
       otherRecommendations: req.body.otherRecommendations,
       furtherComments: req.body.furtherComments,
-      attachments: req.body.attachments,
+      attachments: attachments,
       severityStatus: Math.round(severityStatus * 3),
     });
     incidentReportSuccess(res, req.headers.authorization, incident._id);
