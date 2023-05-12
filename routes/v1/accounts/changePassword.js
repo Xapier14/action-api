@@ -22,11 +22,14 @@ import UserSchema from "../../../models/user.js";
 
 const router = Router();
 
-router.use("/", fields(["oldPassword", "newPassword"]));
 router.post("/", async (req, res) => {
   const token = req.headers.authorization;
   const oldPassword = req.body.oldPassword;
   const newPassword = req.body.newPassword;
+  if (oldPassword == undefined || newPassword == undefined) {
+    unauthorized(res);
+    return;
+  }
   const id = await getUserIdFromToken(token);
   // get users
   try {
