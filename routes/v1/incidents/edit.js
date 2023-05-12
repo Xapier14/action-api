@@ -72,7 +72,6 @@ router.patch("/:id", async (req, res) => {
       unsafePlacard,
       barricadeNeeded,
       barricadeComment,
-      detailedEvaluationNeeded,
       detailedEvaluationAreas,
       otherRecommendations,
       furtherComments,
@@ -104,8 +103,6 @@ router.patch("/:id", async (req, res) => {
     if (unsafePlacard) incident.unsafePlacard = unsafePlacard;
     if (barricadeNeeded) incident.barricadeNeeded = barricadeNeeded;
     if (barricadeComment) incident.barricadeComment = barricadeComment;
-    if (detailedEvaluationNeeded)
-      incident.detailedEvaluationNeeded = detailedEvaluationNeeded;
     if (detailedEvaluationAreas) {
       const detailedEvaluationAreasData = detailedEvaluationAreas.split(",");
       incident.detailedEvaluationAreas = detailedEvaluationAreasData;

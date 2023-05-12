@@ -57,29 +57,6 @@ router.post("/", async (req, res) => {
   try {
     const user = await UserSchema.findOne({ email: email });
 
-    // no email OR password doesn't match
-    if (user === null || !(await bcrypt.compare(password, user.password))) {
-      badLogin(res);
-      logger.log(
-        req.ip,
-        `Bad login attempt. (email: ${email})`,
-        "",
-        "warn",
-        "",
-        "login"
-      );
-      // increment failed login attempts
-      if (user !== null) {
-        user.badLoginAttempts++;
-        if (user.badLoginAttempts >= 5) {
-          user.isLocked = true;
-          user.lastLocked = Date.now();
-        }
-        await user.save();
-      }
-      return;
-    }
-
     // check if account is locked
     if (user.isLocked) {
       accountIsLocked(res);
@@ -89,6 +66,43 @@ router.post("/", async (req, res) => {
         "",
         "warn",
         user.id,
+        "login"
+      );
+      return;
+    }
+
+    // no email OR password doesn't match
+    if (user === null || !(await bcrypt.compare(password, user.password))) {
+      badLogin(res);
+      // increment failed login attempts
+      if (user !== null) {
+        user.badLoginAttempts++;
+        if (user.badLoginAttempts >= 5) {
+          user.isLocked = true;
+          user.lastLocked = Date.now();
+          logger.log(
+            req.ip,
+            `Account locked due to bad login attempts. (email: ${email}) (attempts: ${
+              user?.badLoginAttempts ?? 0
+            })`,
+            "",
+            "warn",
+            "",
+            "login"
+          );
+          await user.save();
+          return;
+        }
+        await user.save();
+      }
+      logger.log(
+        req.ip,
+        `Bad login attempt. (email: ${email}) (attempts: ${
+          user?.badLoginAttempts ?? 0
+        })`,
+        "",
+        "warn",
+        "",
         "login"
       );
       return;
@@ -127,10 +141,12 @@ router.post("/", async (req, res) => {
       );
       return;
     }
+    user.badLoginAttempts = 0;
+    await user.save();
     loginSuccess(res, token, user.location);
     logger.log(
       req.ip,
-      `Login successful. Captcha Score: ${recaptchaResult}`,
+      `Login successful. Captcha Score: ${recaptchaResult}. (email: ${email})`,
       token,
       "info",
       user.id,

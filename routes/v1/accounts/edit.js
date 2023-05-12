@@ -16,10 +16,11 @@ import UserSchema from "../../../models/user.js";
 const router = Router();
 
 //router.use("/", fields(["name", "location", "maxCapacity"]));
-router.post("/:{id}", async (req, res) => {
+router.post("/:id", async (req, res) => {
+  console.log("test");
   try {
     const id = req.params.id;
-    const user = await UserSchema.findOne({ id });
+    const user = await UserSchema.findById(id);
     if (user === null) {
       buildingNotFound(res, id);
       return;
@@ -28,12 +29,13 @@ router.post("/:{id}", async (req, res) => {
     if (!req.body.lastName) return invalidParameter(res, "lastName");
     if (!req.body.email) return invalidParameter(res, "email");
     if (!req.body.location) return invalidParameter(res, "location");
-    if (!req.body.maxAccessLevel)
+    if (
+      req.body.maxAccessLevel != undefined &&
+      req.body.maxAccessLevel != null &&
+      req.body.maxAccessLevel != "" &&
+      isNaN(req.body.maxAccessLevel)
+    )
       return invalidParameter(res, "maxAccessLevel");
-
-    if (isNaN(req.body.maxAccessLevel))
-      return invalidParameter(res, "maxAccessLevel");
-
     if (req.body.maxAccessLevel < 0 || req.body.maxAccessLevel > 1)
       return parameterOutOfRange(res, "maxAccessLevel", 0, 1);
 

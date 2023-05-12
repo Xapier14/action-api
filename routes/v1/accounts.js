@@ -9,6 +9,7 @@ import fetch from "./accounts/index-fetch.js";
 import list from "./accounts/list.js";
 import unlock from "./accounts/unlock.js";
 import lock from "./accounts/lock.js";
+import edit from "./accounts/edit.js";
 
 const router = Router();
 router.use(needsAuthentication);
@@ -24,6 +25,8 @@ router.use("/unlock", mustBeAccessLevel(1));
 router.use("/unlock", unlock);
 router.use("/lock", mustBeAccessLevel(1));
 router.use("/lock", lock);
+router.use("/edit", mustBeAccessLevel(1));
+router.use("/edit", edit);
 
 router.use(fetch);
 
