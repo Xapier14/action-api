@@ -19,19 +19,19 @@ router.post("/", async (req, res) => {
   try {
     if (!req.body.name) return invalidParameter(res, "name");
     if (!req.body.location) return invalidParameter(res, "location");
-    if (!req.body.maxCapacity) return invalidParameter(res, "maxCapacity");
+    if (req.body.maxCapacity === undefined)
+      return invalidParameter(res, "maxCapacity");
     if (!req.body.address) return invalidParameter(res, "address");
     if (!req.body.buildingMarshal)
       return invalidParameter(res, "buildingMarshal");
-    if (!req.body.storyAboveGround)
+    if (req.body.storyAboveGround === undefined)
       return invalidParameter(res, "storyAboveGround");
-    if (!req.body.storyBelowGround)
+    if (req.body.storyBelowGround === undefined)
       return invalidParameter(res, "storyBelowGround");
     if (!req.body.typeOfConstruction)
       return invalidParameter(res, "typeOfConstruction");
     if (!req.body.primaryOccupancy)
       return invalidParameter(res, "primaryOccupancy");
-
     if (isNaN(req.body.maxCapacity))
       return invalidParameter(res, "maxCapacity");
     if (isNaN(req.body.storyAboveGround))
@@ -39,10 +39,10 @@ router.post("/", async (req, res) => {
     if (isNaN(req.body.storyBelowGround))
       return invalidParameter(res, "storyBelowGround");
 
-    if (req.body.maxCapacity < 0 || req.body.maxCapacity > 100000)
+    if (req.body.maxCapacity < 0 || req.body.maxCapacity > 1000000)
       return parameterOutOfRange(res, "maxCapacity", 0, 100000);
-    if (req.body.storyAboveGround < 0 || req.body.storyAboveGround > 100)
-      return parameterOutOfRange(res, "storyAboveGround", 0, 100);
+    if (req.body.storyAboveGround < 0 || req.body.storyAboveGround > 1000000)
+      return parameterOutOfRange(res, "storyAboveGround", 0, 1000000);
 
     const building = await BuildingSchema.create({
       name: req.body.name,

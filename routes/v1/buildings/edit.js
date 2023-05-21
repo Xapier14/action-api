@@ -16,29 +16,29 @@ import BuildingSchema from "../../../models/building.js";
 const router = Router();
 
 //router.use("/", fields(["name", "location", "maxCapacity"]));
-router.post("/:{io}", async (req, res) => {
+router.post("/:id", async (req, res) => {
   const id = req.params.id;
   try {
-    const building = await BuildingSchema.findOne({ id });
+    const building = await BuildingSchema.findOne({ _id: id });
     if (building === null) {
       buildingNotFound(res, id);
       return;
     }
     if (!req.body.name) return invalidParameter(res, "name");
     if (!req.body.location) return invalidParameter(res, "location");
-    if (!req.body.maxCapacity) return invalidParameter(res, "maxCapacity");
+    if (req.body.maxCapacity === undefined)
+      return invalidParameter(res, "maxCapacity");
     if (!req.body.address) return invalidParameter(res, "address");
     if (!req.body.buildingMarshal)
       return invalidParameter(res, "buildingMarshal");
-    if (!req.body.storyAboveGround)
+    if (req.body.storyAboveGround === undefined)
       return invalidParameter(res, "storyAboveGround");
-    if (!req.body.storyBelowGround)
+    if (req.body.storyBelowGround === undefined)
       return invalidParameter(res, "storyBelowGround");
     if (!req.body.typeOfConstruction)
       return invalidParameter(res, "typeOfConstruction");
     if (!req.body.primaryOccupancy)
       return invalidParameter(res, "primaryOccupancy");
-
     if (isNaN(req.body.maxCapacity))
       return invalidParameter(res, "maxCapacity");
     if (isNaN(req.body.storyAboveGround))
@@ -46,10 +46,10 @@ router.post("/:{io}", async (req, res) => {
     if (isNaN(req.body.storyBelowGround))
       return invalidParameter(res, "storyBelowGround");
 
-    if (req.body.maxCapacity < 0 || req.body.maxCapacity > 100000)
+    if (req.body.maxCapacity < 0 || req.body.maxCapacity > 1000000)
       return parameterOutOfRange(res, "maxCapacity", 0, 100000);
-    if (req.body.storyAboveGround < 0 || req.body.storyAboveGround > 100)
-      return parameterOutOfRange(res, "storyAboveGround", 0, 100);
+    if (req.body.storyAboveGround < 0 || req.body.storyAboveGround > 1000000)
+      return parameterOutOfRange(res, "storyAboveGround", 0, 1000000);
 
     building.name = req.body.name;
     building.location = req.body.location;

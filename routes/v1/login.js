@@ -154,6 +154,7 @@ router.post("/", async (req, res) => {
     );
   } catch (err) {
     databaseError(req, res, err);
+    logger.err("login", err);
     logger.log(
       req.ip,
       `Database error. (email: ${email})`,

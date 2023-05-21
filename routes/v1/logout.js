@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import {
+  generalInternalError,
   logoutSuccess,
   unauthorized,
 } from "../../modules/responseGenerator.js";
@@ -13,15 +14,21 @@ const router = Router();
 
 router.post("/", async (req, res) => {
   const token = req.headers.authorization;
-  const session = await SessionSchema.findOne({ token: token });
-  const user = await UserSchema.findOne({ _id: session.userId });
-  if (session === null) {
-    unauthorized(res);
-    return;
+  try {
+    const session = await SessionSchema.findOne({ token: token });
+    const user = await UserSchema.findOne({ _id: session.userId });
+    if (session === null) {
+      unauthorized(res);
+      return;
+    }
+    session.remove();
+    logging.log(req.ip, "Logged out", session.token, "info", user.id, "logout");
+    logoutSuccess(res);
+  } catch (err) {
+    generalInternalError(req, res);
+    logger.err("login", err);
+    logger.log(req.ip, `General error.`, "", "error", "", "logout");
   }
-  session.remove();
-  logging.log(req.ip, "Logged out", session.token, "info", user.id, "logout");
-  logoutSuccess(res);
 });
 
 export default router;

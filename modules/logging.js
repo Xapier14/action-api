@@ -1,4 +1,5 @@
 import LogSchema from "../models/log.js";
+import DetailedError from "../models/detailedError.js";
 
 function min(a, b) {
   return a < b ? a : b;
@@ -30,8 +31,28 @@ export async function log(
     action: action,
   });
 }
+
+async function err(type, error) {
+  try {
+    const dateTime = new Date();
+    console.log(
+      `[${dateTime.toISOString()}] [error] [${type}] [${error.message}]`
+    );
+    await DetailedError.create({
+      dateTime: dateTime,
+      message: error.message,
+      code: error.code,
+      type: type,
+      stack: error.stack,
+      cause: error.cause,
+    });
+  } catch (err) {}
+}
+
 export default {
   log,
+  countLogs,
+  fetchLogs,
 };
 
 export function countLogs(action, ip, userId) {
