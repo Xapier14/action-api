@@ -6,6 +6,7 @@ import {
   databaseError,
   unauthorized,
   incidentNotFound,
+  incidentEditSuccess,
 } from "../../../modules/responseGenerator.js";
 import {
   verifySession,
@@ -26,6 +27,7 @@ router.patch("/", (req, res) => {
 
 router.patch("/:id", async (req, res) => {
   const id = req.params.id;
+  const token = req.headers.authorization;
   if (!id) {
     unauthorized(res);
     return;
@@ -70,6 +72,10 @@ router.patch("/:id", async (req, res) => {
       inspectedPlacard,
       restrictedPlacard,
       unsafePlacard,
+      doNotEnter,
+      briefEntryAllowed,
+      doNotUse,
+      otherRestrictions,
       barricadeNeeded,
       barricadeComment,
       detailedEvaluationAreas,
@@ -77,7 +83,6 @@ router.patch("/:id", async (req, res) => {
       furtherComments,
       attachments,
       resolved,
-      severityStatus,
     } = req.body;
     if (inspectorId) incident.inspectorId = inspectorId;
     if (inspectedDateTime) incident.inspectedDateTime = inspectedDateTime;
@@ -101,6 +106,11 @@ router.patch("/:id", async (req, res) => {
     if (inspectedPlacard) incident.inspectedPlacard = inspectedPlacard;
     if (restrictedPlacard) incident.restrictedPlacard = restrictedPlacard;
     if (unsafePlacard) incident.unsafePlacard = unsafePlacard;
+    if (doNotEnter) incident.doNotEnter = doNotEnter;
+    if (briefEntryAllowed) incident.briefEntryAllowed = briefEntryAllowed;
+    if (doNotUse) incident.doNotUse = doNotUse;
+    if (otherRestrictions) incident.otherRestrictions = otherRestrictions;
+    console.log(incident.otherRestrictions);
     if (barricadeNeeded) incident.barricadeNeeded = barricadeNeeded;
     if (barricadeComment) incident.barricadeComment = barricadeComment;
     if (detailedEvaluationAreas) {
@@ -115,8 +125,22 @@ router.patch("/:id", async (req, res) => {
       incident.attachments = attachmentsData;
     }
     if (resolved) incident.resolved = resolved;
-    if (severityStatus) incident.severityStatus = severityStatus;
+    const average =
+      (req.body.collapsedStructure ?? 0) / 3 +
+      (req.body.leaningOrOutOfPlumb ?? 0) / 3 +
+      (req.body.damageToPrimaryStructure ?? 0) / 3 +
+      (req.body.fallingHazards ?? 0) / 3 +
+      (req.body.groundMovementOrSlope ?? 0) / 3 +
+      (req.body.damagedSubmergedFixtures ?? 0) / 3 +
+      (req.body.proximityRisk ?? 0) / 3;
+    const baseSeverityStatus = average > 0 ? average / 7 : 0;
+    const severityStatus = Math.min(
+      1,
+      (baseSeverityStatus * 2 + (req.body.estimatedBuildingDamage / 5) * 4) / 4
+    );
+    incident.severityStatus = Math.round(severityStatus * 3);
     await incident.save();
+    incidentEditSuccess(res, token, incident.id);
   } catch (err) {
     databaseError(req, res, err);
     return;

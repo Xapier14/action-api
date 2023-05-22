@@ -218,6 +218,14 @@ export function incidentReportSuccess(res, token, incidentId) {
     token: token,
   });
 }
+export function incidentEditSuccess(res, token, incidentId) {
+  res.send({
+    status: "Incident edit successful.",
+    e: 0,
+    incidentId: incidentId,
+    token: token,
+  });
+}
 export function sendListOfReports(
   res,
   token,
