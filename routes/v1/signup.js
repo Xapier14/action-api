@@ -33,7 +33,8 @@ import {
   signupSuccess,
   emailInUse,
 } from "../../modules/responseGenerator.js";
-import { createSession } from "../../modules/tokens.js";
+import { createSession, getUserIdFromToken } from "../../modules/tokens.js";
+import logging from "../../modules/logging.js";
 
 // models
 import UserSchema from "../../models/user.js";
@@ -43,6 +44,8 @@ const router = Router();
 router.use(fields(["email", "password", "firstName", "lastName", "location"]));
 router.use(mustBeAccessLevel(1));
 router.post("/", async (req, res) => {
+  const token = req.headers.authorization;
+  const userId = await getUserIdFromToken(token);
   const email = req.body.email?.toLowerCase() ?? "";
   const password = req.body.password;
   const firstName = req.body.firstName;
@@ -87,8 +90,16 @@ router.post("/", async (req, res) => {
         location: location,
         maxAccessLevel: maxAccessLevel,
       });
-      // create jwt token
+      // create token
       const sessionToken = createSession(newUser.id, 0);
+      logging.log(
+        req.ip,
+        `User ${userId} created user ${newUser.id}.`,
+        token,
+        "info",
+        userId,
+        "signup"
+      );
       signupSuccess(res, sessionToken);
     } else {
       // email is in use
@@ -96,6 +107,15 @@ router.post("/", async (req, res) => {
     }
   } catch (err) {
     databaseError(req, res, err);
+    logging.log(
+      req.ip,
+      `Error with database when creating user.`,
+      token,
+      "error",
+      userId,
+      "signup"
+    );
+    logging.err("Signup", err);
   }
   return;
 });

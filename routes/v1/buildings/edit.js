@@ -9,6 +9,8 @@ import {
   parameterOutOfRange,
   invalidParameter,
 } from "../../../modules/responseGenerator.js";
+import logging from "../../../modules/logging.js";
+import { getUserIdFromToken } from "../../../modules/tokens.js";
 
 // models
 import BuildingSchema from "../../../models/building.js";
@@ -18,6 +20,8 @@ const router = Router();
 //router.use("/", fields(["name", "location", "maxCapacity"]));
 router.post("/:id", async (req, res) => {
   const id = req.params.id;
+  const token = req.headers.authorization;
+  const userId = await getUserIdFromToken(req.headers.authorization);
   try {
     const building = await BuildingSchema.findOne({ _id: id });
     if (building === null) {
@@ -64,8 +68,25 @@ router.post("/:id", async (req, res) => {
     building.primaryOccupancy = req.body.primaryOccupancy;
     await building.save();
     buildingEdited(res, building._id);
+    logging.log(
+      req.ip,
+      `Building data ${building._id} edited.`,
+      token,
+      "info",
+      userId,
+      "editBuilding"
+    );
   } catch (err) {
     databaseError(req, res, err);
+    logging.log(
+      req.ip,
+      `Building data ${id} edit failed.`,
+      token,
+      "error",
+      userId,
+      "editBuilding"
+    );
+    logging.err("Building.Edit", err);
     return;
   }
 });

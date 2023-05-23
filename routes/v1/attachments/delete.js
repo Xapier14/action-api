@@ -19,9 +19,11 @@ import {
   attachmentDeleteSuccess,
 } from "../../../modules/responseGenerator.js";
 import { deleteAttachment } from "../../../modules/attachment.js";
+import { getUserIdFromToken } from "../../../modules/tokens.js";
 
 // models
 import AttachmentSchema from "../../../models/attachment.js";
+import logging from "../../../modules/logging.js";
 
 const router = Router();
 
@@ -31,6 +33,7 @@ router.post("/", (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   const id = req.params.id;
+  const userId = await getUserIdFromToken(token);
   const token = req.headers.authorization;
 
   // get attachment
@@ -43,8 +46,25 @@ router.delete("/:id", async (req, res) => {
   // delete file
   try {
     deleteAttachment(attachment.mediaId, attachment.mediaExtension);
+    logging.log(
+      req.ip,
+      `Attachment deleted. (id: ${attachment.mediaId})`,
+      token,
+      "info",
+      userId,
+      "deleteAttachment"
+    );
   } catch (error) {
     internalFileReadError(res);
+    logging.log(
+      req.ip,
+      `Attachment delete failed. (id: ${attachment.mediaId})`,
+      token,
+      "error",
+      userId,
+      "deleteAttachment"
+    );
+    logging.err("Attachment.Delete", error);
     return;
   }
 

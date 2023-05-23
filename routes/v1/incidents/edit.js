@@ -28,6 +28,7 @@ router.patch("/", (req, res) => {
 router.patch("/:id", async (req, res) => {
   const id = req.params.id;
   const token = req.headers.authorization;
+  const userId = await getUserIdFromToken(req.headers.authorization);
   if (!id) {
     unauthorized(res);
     return;
@@ -39,7 +40,6 @@ router.patch("/:id", async (req, res) => {
       return;
     }
     const userLocation = await getLocationFromToken(req.headers.authorization);
-    const userId = await getUserIdFromToken(req.headers.authorization);
     const accessLevel = (await verifySession(req.headers.authorization)) ?? 0;
     if (accessLevel < 1 && incident.location !== userLocation) {
       unauthorized(res);
@@ -141,8 +141,25 @@ router.patch("/:id", async (req, res) => {
     incident.severityStatus = Math.round(severityStatus * 3);
     await incident.save();
     incidentEditSuccess(res, token, incident.id);
+    logger.log(
+      req.ip,
+      `Edited incident ${incident.id}.`,
+      req.headers.authorization,
+      "info",
+      userId,
+      "incidents/edit"
+    );
   } catch (err) {
     databaseError(req, res, err);
+    logger.log(
+      req.ip,
+      `Failed to edit incident ${id}.`,
+      req.headers.authorization,
+      "error",
+      null,
+      "incidents/edit"
+    );
+    logging.err("Incidents.Edit", err);
     return;
   }
 });

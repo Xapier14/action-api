@@ -421,6 +421,16 @@ export function attachmentFound(res, fileName, contentType, token, expires) {
     expires: expires,
   });
 }
+export function searchResults(res, query, users, buildings, searchTime) {
+  res.send({
+    status: "Search results.",
+    e: 0,
+    query: query,
+    users: users,
+    buildings: buildings,
+    searchTime: searchTime,
+  });
+}
 
 // misc responses
 export function sendNoSession(res) {

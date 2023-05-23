@@ -51,6 +51,7 @@ async function err(type, error) {
 
 export default {
   log,
+  err,
   countLogs,
   fetchLogs,
 };

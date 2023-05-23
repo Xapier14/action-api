@@ -6,15 +6,18 @@ import {
   databaseError,
   sendAccountList,
 } from "../../../modules/responseGenerator.js";
+import { getUserIdFromToken } from "../../../modules/tokens.js";
 
 // models
 import UserSchema from "../../../models/user.js";
+import logging from "../../../modules/logging.js";
 
 const router = Router();
 
 router.get("/", async (req, res) => {
   const location = req.query.location;
-
+  const token = req.headers.authorization;
+  const userId = await getUserIdFromToken(token);
   // get buildings
   try {
     const query = {};
@@ -45,6 +48,15 @@ router.get("/", async (req, res) => {
     sendAccountList(res, location ?? "All", userList);
   } catch (err) {
     databaseError(req, res, err);
+    logging.log(
+      req.ip,
+      "Error with database when fetching account list.",
+      token,
+      "error",
+      userId,
+      "accounts/list"
+    );
+    logging.err("Accounts.List", err);
     return;
   }
 });

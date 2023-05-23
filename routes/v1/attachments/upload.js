@@ -27,6 +27,8 @@ import { generateThumbnail } from "../../../modules/ffmpeg.js";
 import AttachmentSchema from "../../../models/attachment.js";
 import UserSchema from "../../../models/user.js";
 
+import logging from "../../../modules/logging.js";
+
 const router = Router();
 
 router.post("/", uploadSingle("file"), async (req, res) => {
@@ -61,9 +63,25 @@ router.post("/", uploadSingle("file"), async (req, res) => {
   });
   if (attachment === null) {
     databaseError(req, res, err);
-    console.log(err);
+    logging.log(
+      req.ip,
+      `Database error. (id: ${id})`,
+      token,
+      "error",
+      userId,
+      "saveAttachment"
+    );
+    logging.err("Attachment.Save", err);
     return;
   }
+  logging.log(
+    req.ip,
+    `Attachment saved. (id: ${id})`,
+    token,
+    "info",
+    userId,
+    "saveAttachment"
+  );
   attachmentUploadSuccess(res, token, id);
 });
 

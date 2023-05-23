@@ -7,6 +7,8 @@ import {
   databaseError,
   sendReportsCount,
 } from "../../../modules/responseGenerator.js";
+import { getUserIdFromToken } from "../../../modules/tokens.js";
+import logging from "../../../modules/logging.js";
 
 // models
 import IncidentSchema from "../../../models/incident.js";
@@ -14,6 +16,8 @@ import IncidentSchema from "../../../models/incident.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
+  const token = req.headers.authorization;
+  const userId = await getUserIdFromToken(token);
   const location = req.query.location;
   const building = req.query.building;
   if (location == unauthorized) {
@@ -32,6 +36,15 @@ router.get("/", async (req, res) => {
     sendReportsCount(res, count, location, building ?? undefined);
   } catch (err) {
     databaseError(req, res, err);
+    logging.log(
+      req.ip,
+      "Error with database when fetching report count.",
+      token,
+      "error",
+      userId,
+      "reports/count"
+    );
+    logging.err("Reports.Count", err);
     return;
   }
 });

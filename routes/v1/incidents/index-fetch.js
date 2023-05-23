@@ -15,10 +15,13 @@ import {
 
 // models
 import IncidentSchema from "../../../models/incident.js";
+import logging from "../../../modules/logging.js";
 
 const router = Router();
 router.get("/:id", async (req, res) => {
   const reportId = req.params.id;
+  const token = req.headers.authorization;
+  const userId = await getUserIdFromToken(token);
   // get incident
   try {
     const incident = await IncidentSchema.findOne({ _id: reportId });
@@ -26,9 +29,6 @@ router.get("/:id", async (req, res) => {
       incidentNotFound(res, reportId);
       return;
     }
-
-    const token = req.headers.authorization;
-    const userId = await getUserIdFromToken(token);
 
     const accessLevel = (await verifySession(token)) ?? 0;
     const userLocation = await getLocationFromToken(token);
@@ -83,8 +83,16 @@ router.get("/:id", async (req, res) => {
       severityStatus: incident.severityStatus,
     });
   } catch (err) {
-    console.log(err);
     incidentNotFound(res, reportId);
+    logging.log(
+      req.ip,
+      `Failed to fetch incident ${reportId}.`,
+      token,
+      "error",
+      userId,
+      "incidents/fetch"
+    );
+    logging.err("Incident.Fetch", err);
   }
 });
 

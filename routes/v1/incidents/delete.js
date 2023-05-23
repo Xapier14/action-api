@@ -14,6 +14,7 @@ import logger from "../../../modules/logging.js";
 // models
 import IncidentSchema from "../../../models/incident.js";
 import { getUserIdFromToken } from "../../../modules/tokens.js";
+import logging from "../../../modules/logging.js";
 
 const router = Router();
 router.use(mustBeAccessLevel(1));
@@ -24,6 +25,15 @@ router.delete("/:id", async (req, res) => {
     if (err) {
       console.log(err);
       incidentNotFound(res, req.params.id);
+      logging.log(
+        req.ip,
+        "Error with database when deleting incident.",
+        token,
+        "error",
+        userId,
+        "incident/delete"
+      );
+      logging.err("Error with database when deleting incident.", err);
     } else {
       incident.remove();
       logger.log(

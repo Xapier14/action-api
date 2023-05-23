@@ -76,6 +76,14 @@ router.get("/", async (req, res) => {
   );
   if (results === null) {
     generalInternalError(req, res);
+    logger.log(
+      req.ip,
+      `Failed to fetch incidents.`,
+      token,
+      "error",
+      userId,
+      "incidents/fetch"
+    );
     return;
   }
   sendListOfReports(

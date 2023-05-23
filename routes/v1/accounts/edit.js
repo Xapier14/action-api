@@ -12,12 +12,12 @@ import {
 
 // models
 import UserSchema from "../../../models/user.js";
+import logging from "../../../modules/logging.js";
 
 const router = Router();
 
 //router.use("/", fields(["name", "location", "maxCapacity"]));
 router.post("/:id", async (req, res) => {
-  console.log("test");
   try {
     const id = req.params.id;
     const user = await UserSchema.findById(id);
@@ -45,9 +45,26 @@ router.post("/:id", async (req, res) => {
     user.location = req.body.location;
     user.maxAccessLevel = req.body.maxAccessLevel;
     await user.save();
+    logging.log(
+      req.ip,
+      `User ${user._id} account data edited.`,
+      req.headers.authorization,
+      "info",
+      user._id,
+      "editAccount"
+    );
     accountEdited(res);
   } catch (err) {
     databaseError(req, res, err);
+    logging.log(
+      req.ip,
+      `Error with database when editing user account data.`,
+      req.headers.authorization,
+      "error",
+      await getUserIdFromToken(req.headers.authorization),
+      "editAccount"
+    );
+    logging.err("Account.Edit", err);
     return;
   }
 });

@@ -36,7 +36,7 @@ router.get("/", async (req, res) => {
       token,
       "warn",
       userId,
-      "buildings/fetch"
+      "buildings/list"
     );
     return;
   }
@@ -69,6 +69,15 @@ router.get("/", async (req, res) => {
     );
   } catch (err) {
     databaseError(req, res, err);
+    logger.log(
+      req.ip,
+      `Error while fetching buildings: ${err}`,
+      token,
+      "error",
+      userId,
+      "buildings/list"
+    );
+    logger.err("Buildings.List", err);
     return;
   }
 });

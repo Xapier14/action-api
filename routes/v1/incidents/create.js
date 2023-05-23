@@ -14,17 +14,21 @@ import {
 } from "../../../modules/responseGenerator.js";
 import { getLocationFromToken } from "../../../modules/tokens.js";
 import logger from "../../../modules/logging.js";
+import { getUserIdFromToken } from "../../../modules/tokens.js";
 
 // models
 import AttachmentSchema from "../../../models/attachment.js";
 import IncidentSchema from "../../../models/incident.js";
 import SessionSchema from "../../../models/session.js";
 import BuildingSchema from "../../../models/building.js";
+import logging from "../../../modules/logging.js";
 
 const router = Router();
 
 router.use("/", fields(getRequiredFieldsForReport()));
 router.post("/", async (req, res) => {
+  const token = req.headers.authorization;
+  const userId = await getUserIdFromToken(token);
   try {
     const session = await SessionSchema.findOne({
       token: req.headers.authorization,
@@ -111,8 +115,25 @@ router.post("/", async (req, res) => {
       severityStatus: Math.round(severityStatus * 3),
     });
     incidentReportSuccess(res, req.headers.authorization, incident._id);
+    logging.log(
+      req.ip,
+      `Created incident report ${incident._id}.`,
+      token,
+      "info",
+      userId,
+      "incidents/create"
+    );
   } catch (err) {
     databaseError(req, res, err);
+    logging.log(
+      req.ip,
+      `Failed to create incident report.`,
+      token,
+      "error",
+      userId,
+      "incidents/create"
+    );
+    logging.err("Incident.Create", err);
     return;
   }
 });

@@ -8,14 +8,19 @@ import {
   parameterOutOfRange,
   invalidParameter,
 } from "../../../modules/responseGenerator.js";
+import { getUserIdFromToken } from "../../../modules/tokens.js";
 
 // models
 import BuildingSchema from "../../../models/building.js";
+import logging from "../../../modules/logging.js";
 
 const router = Router();
 
 //router.use("/", fields(["name", "location", "maxCapacity"]));
 router.post("/", async (req, res) => {
+  const token = req.headers.authorization;
+  const userId = await getUserIdFromToken(token);
+
   try {
     if (!req.body.name) return invalidParameter(res, "name");
     if (!req.body.location) return invalidParameter(res, "location");
@@ -57,8 +62,25 @@ router.post("/", async (req, res) => {
       primaryOccupancy: req.body.primaryOccupancy,
     });
     buildingAdded(res, building._id);
+    logging.log(
+      req.ip,
+      `Building ${building._id} added.`,
+      token,
+      "info",
+      userId,
+      "addBuilding"
+    );
   } catch (err) {
     databaseError(req, res, err);
+    logging.log(
+      req.ip,
+      `Building ${building._id} failed to add.`,
+      token,
+      "error",
+      userId,
+      "addBuilding"
+    );
+    logging.err("Building.Add", err);
     return;
   }
 });

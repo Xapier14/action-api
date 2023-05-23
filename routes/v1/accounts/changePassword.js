@@ -70,6 +70,15 @@ router.post("/", async (req, res) => {
     passwordChanged(res);
   } catch (err) {
     databaseError(req, res, err);
+    logging.log(
+      req.ip,
+      `Error changing password for user ${id}`,
+      "",
+      "error",
+      "",
+      "changePassword"
+    );
+    logging.err("changePassword", err);
     return;
   }
 });
@@ -111,6 +120,15 @@ router.post("/:id", async (req, res) => {
     passwordChanged(res);
   } catch (err) {
     databaseError(req, res, err);
+    logging.log(
+      req.ip,
+      `Error changing password for user ${id}`,
+      "",
+      "error",
+      "",
+      "changePassword"
+    );
+    logging.err("changePassword", err);
     return;
   }
 });
