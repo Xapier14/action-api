@@ -1,6 +1,7 @@
 # Project ACTION
 
-The backend service for a proposed companion service to be used by The BatStateU ACTION Center
+The backend service for a proposed companion service to be used by The BatStateU ACTION Center.
+View it in action [here](https://action-web.pages.dev).
 
 ## Getting Started
 
@@ -28,15 +29,19 @@ The backend service for a proposed companion service to be used by The BatStateU
 
    ```
    DB_CONNECTION=mongodb://<hostname>:27017/action-api
-   PORT=80
+   PORT=3000
    AZURE_CONNECTION_STRING=<azure-string>
-   GOOGLE_CLOUD_PROJECT=<gcloud-project-name>
+   GOOGLE_CLOUD_PROJECT_ID=<gcloud-project-id>
+   GOOGLE_CLOUD_API_KEY=<gcloud-api-key>
    RECAPTCHA_SITE_KEY=<gcloud-enterprise-site-key>
+   ROUTE_LOGGER=<true-or-false>
+   ENV_CONFIG=<config-discriptor>
    ```
 
    > **Note:**
+   > The Google Cloud Project ID is required, not the project name.
    > If you are using MongoDB Atlas, just paste the connection string from your dashboard and append '/action-api' to specify the database.
-   > If you do not have an Azure subscription to use Azure Blob Storage or have not installed Azurite (Azure emulator), leave the field blank to fallback to local storage.
+   > If you do not have an Azure subscription to use Azure Blob Storage or have not installed Azurite (Azure emulator), leave the field blank to fallback to local storage. (Not recommended for production, files will be deleted when the container is removed.)
 
 1. Run the image with the env file.
 
@@ -56,7 +61,7 @@ The backend service for a proposed companion service to be used by The BatStateU
    - [Node.js](https://nodejs.org/en/)
    - [MongoDB](https://www.mongodb.com/)
    - [Azurite](https://github.com/azure/azurite) (Optional for testing only, not needed and should not be used for production.)
-   - [FFMPEG](https://ffmpeg.org/download.html)
+   - [FFMPEG](https://ffmpeg.org/download.html) (Should either be in your PATH or in the root directory of the project.)
 1. Clone the repository.
    ```
    git clone https://github.com/xapier14/action-api.git
@@ -81,11 +86,15 @@ The backend service for a proposed companion service to be used by The BatStateU
    DB_CONNECTION=mongodb://<hostname>:27017/action-api
    PORT=80
    AZURE_CONNECTION_STRING=<azure-string>
-   GOOGLE_CLOUD_PROJECT=<gcloud-project-name>
+   GOOGLE_CLOUD_PROJECT_ID=<gcloud-project-id>
+   GOOGLE_CLOUD_API_KEY=<gcloud-api-key>
    RECAPTCHA_SITE_KEY=<gcloud-enterprise-site-key>
+   ROUTE_LOGGER=<true-or-false>
+   ENV_CONFIG=<config-discriptor>
    ```
 
    > **Note:**
+   > The Google Cloud Project ID is required, not the project name.
    > If you are using MongoDB Atlas, just paste the connection string from your dashboard and append '/action-api' to specify the database.
    > If you do not have an Azure subscription to use Azure Blob Storage or have not installed Azurite (Azure emulator), leave the field blank to fallback to local storage.
 
@@ -93,8 +102,7 @@ The backend service for a proposed companion service to be used by The BatStateU
    ```
    npm run start
    ```
-1. You should now be able to access the API at `http://localhost:80`.
-   On the first run, a default admin user will be created with the following credentials:
+1. Run an instance of [action-dashboard](https://github.com/Xapier14/action-dashboard) and login to the newly created administrator account.
 
    ```
    email: admin@g.batstate-u.edu.ph
@@ -106,27 +114,28 @@ The backend service for a proposed companion service to be used by The BatStateU
 
    > **Note:**
    > The `action-dashboard` client has different environment variables depending on the configuration. The default configuration is for a local development environment. If you are running the API on a different port, you will need to update the `apiHost` variable in [environment.ts](action-dashboard/src/environments/environment.ts).
+   > Make sure you have a valid ReCaptcha configuration, otherwise you will not be able to login.
 
 ## Progress
 
-- [ ] Accounts
+- [x] Accounts
   - [x] Create account
   - [x] Login
-  - [ ] Delete account
-  - [ ] Modify account password
+  - [x] Delete account
+  - [x] Modify account password
   - [x] Check token
   - [x] Logout (delete token)
-- [ ] Incidents
+- [x] Incidents
   - [x] Create incident
   - [x] View single incident
   - [x] View all and filter incidents
   - [x] Delete incident
-  - [ ] Modify incident
-- [ ] Buildings
+  - [x] Modify incident
+- [x] Buildings
   - [x] Add building
   - [x] List buildings
   - [x] Delete building
-  - [ ] Modify building
+  - [x] Modify building
 - [x] Attachments
   - [x] Upload attachment
   - [x] Retrieve attachment
