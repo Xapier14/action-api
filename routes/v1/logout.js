@@ -16,6 +16,10 @@ router.post("/", async (req, res) => {
   const token = req.headers.authorization;
   try {
     const session = await SessionSchema.findOne({ token: token });
+    if (session === null) {
+      unauthorized(res);
+      return;
+    }
     const user = await UserSchema.findOne({ _id: session.userId });
     if (session === null) {
       unauthorized(res);
@@ -26,8 +30,8 @@ router.post("/", async (req, res) => {
     logoutSuccess(res);
   } catch (err) {
     generalInternalError(req, res);
-    logger.err("login", err);
-    logger.log(req.ip, `General error.`, "", "error", "", "logout");
+    logging.err("logout", err);
+    logging.log(req.ip, `General error.`, "", "error", "", "logout");
   }
 });
 
