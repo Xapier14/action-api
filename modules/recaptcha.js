@@ -49,9 +49,9 @@ export async function verifyTokenAsync(token, action) {
   }
   const response = await createAssessment(token, action);
 
-  if (!response.tokenProperties.valid) {
+  if (!response.tokenProperties?.valid == true) {
     console.log(
-      "Invalid token, reason: " + response.tokenProperties.invalidReason
+      "Invalid token, reason: " + (response.tokenProperties?.invalidReason ?? "n/a")
     );
     return -2.0;
   }
