@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:16-alpine
 
 #Create app directory
 WORKDIR /usr/src/app
@@ -9,8 +9,9 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install FFMPEG
-RUN apt-get update && apt-get install -y \
-    ffmpeg
+RUN apk update
+RUN apk upgrade
+RUN apk add --no-cache ffmpeg
 
 # RUN npm install
 # If you are building your code for production
