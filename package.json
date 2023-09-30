@@ -16,6 +16,7 @@
   "dependencies": {
     "@azure/storage-blob": "^12.13.0",
     "azure-storage": "^2.10.7",
+    "basic-ftp": "^5.0.3",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",

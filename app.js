@@ -10,7 +10,7 @@ import logging from "./modules/logging.js";
 
 import UserSchema from "./models/user.js";
 
-import { useAzureStorage } from "./modules/attachment.js";
+import { useAzureStorage, useFtpStorage } from "./modules/attachment.js";
 import { revokeAllCreatedSessions } from "./modules/tokens.js";
 import { clearLocalCache } from "./modules/attachment.js";
 import { getFFMPEGVersion } from "./modules/ffmpeg.js";
@@ -132,12 +132,28 @@ mongoose.connect(
         "",
         "init"
       );
+
       // init azure storage
       if (process.env.AZURE_CONNECTION_STRING !== "") {
         console.log("Using Azure blob storage...");
         await useAzureStorage(process.env.AZURE_CONNECTION_STRING);
       } else {
         console.log("Azure blob storage not configured");
+      }
+
+      // init ftp storage
+      if (
+        process.env.AZURE_CONNECTION_STRING === "" &&
+        process.env.FTP_CONNECTION_STRING !== ""
+      ) {
+        console.log("Using FTP for storage...");
+        await useFtpStorage(process.env.FTP_CONNECTION_STRING);
+      } else {
+        console.log("Azure blob storage & FTP storage not configured.");
+        console.log("Using local cache.");
+        console.warn(
+          "Warning. This may be a problem for containerized deployments."
+        );
       }
 
       useRecaptcha(siteKey, apiKey, googleCloudProjectId);
