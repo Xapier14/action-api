@@ -178,12 +178,12 @@ export function deleteAttachment(attachmentId, extension) {
   deleteLocally(`${attachmentId}-thumb`, extension);
 }
 
-async function saveLocally(fileName, filePath) {
+function saveLocally(fileName, filePath) {
   const localPath = LOCAL_ROOT + fileName;
 
   const readStream = fs.createReadStream(filePath);
   const writeStream = fs.createWriteStream(localPath);
-  readStream.pipe(writeStream);
+  return readStream.pipe(writeStream);
 }
 
 async function saveFtp(fileName, filePath) {
@@ -241,10 +241,12 @@ export async function saveAttachment(
     return;
   }
   // use sftp
-  await saveLocally(blobName, filePath);
-  await saveLocally(thumbnailName, thumbnailName);
-  await fsp.unlink(filePath);
-  await fsp.unlink(thumbnailName);
+  saveLocally(blobName, filePath).on("finish", async () => {
+    await fsp.unlink(filePath);
+  });
+  saveLocally(thumbnailName, thumbnailName).on("finish", async () => {
+    await fsp.unlink(thumbnailName);
+  });;
 }
 
 async function fetchLocally(fileName) {
