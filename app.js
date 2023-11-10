@@ -73,9 +73,9 @@ if (!fs.existsSync("./attachments")) {
 
 // mongoose, db init
 const port = process.env.PORT || 3000;
-const siteKey = process.env.RECAPTCHA_SITE_KEY;
-const apiKey = process.env.GOOGLE_CLOUD_API_KEY;
-const googleCloudProjectId = process.env.GOOGLE_CLOUD_PROJECT_ID;
+const siteKey = process.env.RECAPTCHA_SITE_KEY ?? "";
+const apiKey = process.env.GOOGLE_CLOUD_API_KEY ?? "";
+const googleCloudProjectId = process.env.GOOGLE_CLOUD_PROJECT_ID ?? "";
 
 mongoose.set("strictQuery", false);
 mongoose.connect(

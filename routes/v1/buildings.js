@@ -7,6 +7,7 @@ import edit from "./buildings/edit.js";
 import list from "./buildings/list.js";
 import deleteId from "./buildings/delete.js";
 import fetch from "./buildings/index-fetch.js";
+import inventory from "./buildings/inventory.js";
 
 const router = Router();
 router.use(needsAuthentication);
@@ -19,6 +20,7 @@ router.use("/delete", mustBeAccessLevel(1));
 router.use("/delete", deleteId);
 
 router.use("/list", list);
+router.use("/inventory", inventory);
 router.use(fetch);
 
 export default router;

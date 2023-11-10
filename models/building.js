@@ -46,6 +46,11 @@ const BuildingSchema = new Schema({
     default: "offices",
     required: true,
   },
+  // array of tuples in (string, string)
+  inventory: {
+    type: Array,
+    default: [],
+  },
 });
 
 export default model("Building", BuildingSchema);
