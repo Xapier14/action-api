@@ -16,6 +16,7 @@ import {
 } from "../../../modules/responseGenerator.js";
 import {
   fetchAttachment,
+  isUsingAwsS3,
   isUsingAzureStorage,
 } from "../../../modules/attachment.js";
 
@@ -46,7 +47,7 @@ router.get("/:fileName", async (req, res) => {
     return;
   }
   res.setHeader("Content-Type", taToken.contentType);
-  if (!isUsingAzureStorage()) {
+  if (!isUsingAzureStorage() && !isUsingAwsS3) {
     res.write(data);
   } else {
     // redirect

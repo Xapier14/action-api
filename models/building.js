@@ -46,7 +46,14 @@ const BuildingSchema = new Schema({
     default: "offices",
     required: true,
   },
-  // array of tuples in (string, string)
+  // array of item objects
+  /*
+  {
+    name,
+    itemCode,
+    description,
+  }
+  */
   inventory: {
     type: Array,
     default: [],

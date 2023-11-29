@@ -1,6 +1,23 @@
+// Azure Blob Storage
 import azure from "azure-storage";
 import { BlobServiceClient } from "@azure/storage-blob";
+
+// AWS S3
+import {
+  S3Client,
+  HeadBucketCommand,
+  CreateBucketCommand,
+  PutObjectCommand,
+  DeleteObjectCommand,
+  GetObjectCommand,
+  paginateListObjectsV2,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { fromEnv } from "@aws-sdk/credential-providers";
+
+// FTP
 import * as ftp from "basic-ftp";
+
 import path from "path";
 import fs, { promises as fsp } from "fs";
 import { exit } from "process";
@@ -14,6 +31,11 @@ let azureConnectionString = null;
 let blobServiceClient = null;
 let azureBlobService = null;
 let containerClient = null;
+
+// AWS S3
+let s3Client = null;
+let s3Bucket = null;
+let s3Region = null;
 
 // FTP
 let ftpConnectionString = null;
@@ -46,6 +68,49 @@ export async function useAzureStorage(connectionString) {
     console.log("[AzureClient] Error: " + response.errorCode);
     exit();
   }
+}
+
+export async function useAwsStorage(region, bucketName) {
+  if (s3Client !== null) {
+    console.log("AWS S3 storage already in use");
+    return;
+  }
+  s3Client = new S3Client({
+    credentials: fromEnv(),
+    region: region,
+  });
+  s3Region = region;
+  s3Bucket = bucketName;
+  try {
+    const response = await s3Client.send(
+      new CreateBucketCommand({ Bucket: bucketName })
+    );
+    console.log("Bucket created: ", response);
+  } catch (err) {
+    if (err.name == undefined) {
+      console.log("Error creating bucket: ", err);
+      s3Client.destroy();
+      s3Client = null;
+      s3Region = null;
+      return;
+    }
+    if (err.name == "BucketAlreadyOwnedByYou") {
+      console.log("Bucket exists and is owned by you.");
+    } else if (err.name == "BucketAlreadyExists") {
+      console.log("Bucket exists and is owned by another account.");
+      s3Client.destroy();
+      s3Client = null;
+      s3Region = null;
+      return;
+    } else {
+      console.log("Error creating bucket: ", err.name);
+      s3Client.destroy();
+      s3Client = null;
+      s3Region = null;
+      return;
+    }
+  }
+  console.log("AWS S3 configured successfully.");
 }
 
 export async function useFtpStorage(connectionString) {
@@ -102,6 +167,10 @@ export function isUsingAzureStorage() {
     blobServiceClient !== null &&
     containerClient !== null
   );
+}
+
+export function isUsingAwsS3() {
+  return s3Client !== null && s3Region !== null && s3Bucket !== null;
 }
 
 export function isUsingFtpStorage() {
@@ -162,10 +231,24 @@ function deleteFromAzure(attachmentId, extension) {
   });
 }
 
+function deleteFromAwsS3(attachmentId, extension) {
+  const fileName = attachmentId + "." + extension;
+  const command = new DeleteObjectCommand({
+    Bucket: s3Bucket,
+    Key: fileName,
+  });
+  s3Client.send(command);
+}
+
 export function deleteAttachment(attachmentId, extension) {
   if (isUsingAzureStorage()) {
     deleteFromAzure(attachmentId, extension);
     deleteFromAzure(`${attachmentId}-thumb`, extension);
+    return;
+  }
+  if (isUsingAwsS3()) {
+    deleteFromAwsS3(attachmentId, extension);
+    deleteFromAwsS3(`${attachmentId}-thumb`, extension);
     return;
   }
   if (isUsingFtpStorage()) {
@@ -217,6 +300,16 @@ async function saveToAzure(blobName, mediaType, filePath) {
   blobClient.setHTTPHeaders(blobHTTPHeaders);
 }
 
+async function saveToAwsS3(fileName, mediaType, filePath) {
+  const command = new PutObjectCommand({
+    Bucket: s3Bucket,
+    Key: fileName,
+    Body: fs.readFileSync(filePath),
+    ContentType: mediaType,
+  });
+  await s3Client.send(command);
+}
+
 export async function saveAttachment(
   attachmentId,
   mediaType,
@@ -229,6 +322,13 @@ export async function saveAttachment(
   if (isUsingAzureStorage()) {
     await saveToAzure(blobName, mediaType, filePath);
     await saveToAzure(thumbnailName, "image/png", thumbnailName);
+    await fsp.unlink(filePath);
+    await fsp.unlink(thumbnailName);
+    return;
+  }
+  if (isUsingAwsS3()) {
+    await saveToAwsS3(blobName, mediaType, filePath);
+    await saveToAwsS3(thumbnailName, "image/png", thumbnailName);
     await fsp.unlink(filePath);
     await fsp.unlink(thumbnailName);
     return;
@@ -246,7 +346,7 @@ export async function saveAttachment(
   });
   saveLocally(thumbnailName, thumbnailName).on("finish", async () => {
     await fsp.unlink(thumbnailName);
-  });;
+  });
 }
 
 async function fetchLocally(fileName) {
@@ -305,9 +405,21 @@ function fetchFromAzure(fileName) {
   return url;
 }
 
+async function fetchFromAwsS3(fileName) {
+  const command = new GetObjectCommand({
+    Bucket: s3Bucket,
+    Key: fileName,
+  });
+  const url = await getSignedUrl(s3Client, command, { expiresIn: 60 * 60 * 4 });
+  return url;
+}
+
 export async function fetchAttachment(fileName) {
   if (isUsingAzureStorage()) {
     return fetchFromAzure(fileName);
+  }
+  if (isUsingAwsS3()) {
+    return fetchFromAwsS3(fileName);
   }
   if (isUsingFtpStorage()) {
     return fetchFtp(fileName);

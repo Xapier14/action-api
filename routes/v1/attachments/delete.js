@@ -33,8 +33,8 @@ router.post("/", (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   const id = req.params.id;
-  const userId = await getUserIdFromToken(token);
   const token = req.headers.authorization;
+  const userId = await getUserIdFromToken(token);
 
   // get attachment
   const attachment = await AttachmentSchema.findOne({ mediaId: id });

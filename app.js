@@ -10,7 +10,14 @@ import logging from "./modules/logging.js";
 
 import UserSchema from "./models/user.js";
 
-import { useAzureStorage, useFtpStorage } from "./modules/attachment.js";
+import {
+  isUsingAwsS3,
+  isUsingAzureStorage,
+  isUsingFtpStorage,
+  useAwsStorage,
+  useAzureStorage,
+  useFtpStorage,
+} from "./modules/attachment.js";
 import { revokeAllCreatedSessions } from "./modules/tokens.js";
 import { clearLocalCache } from "./modules/attachment.js";
 import { getFFMPEGVersion } from "./modules/ffmpeg.js";
@@ -42,10 +49,14 @@ const readlineInterface = readline.createInterface({
 const readlineCallback = function (line) {
   if (line !== "")
     switch (line) {
-      case "exit":
-        console.log("Exiting...");
-        readlineInterface.close();
-        process.exit(0);
+      case "help":
+        console.log("Available commands:");
+        console.log("help\t\t\t- Displays available commands");
+        console.log("revoke\t\t\t- Revokes all sessions");
+        console.log("deleteAttachments\t- Deletes all attachments");
+        console.log("clearUploadCache\t- Clears the upload cache [Deprecated]");
+        console.log();
+        break;
       case "revoke":
         console.log("Revoking all sessions...");
         revokeAllCreatedSessions();
@@ -57,6 +68,10 @@ const readlineCallback = function (line) {
         console.log("Clearing upload cache...");
         clearLocalCache();
         break;
+      case "exit":
+        console.log("Exiting...");
+        readlineInterface.close();
+        process.exit(0);
       default:
         console.log("Unknown command");
         break;
@@ -135,10 +150,24 @@ mongoose.connect(
 
       // init azure storage
       if (process.env.AZURE_CONNECTION_STRING !== "") {
-        console.log("Using Azure blob storage...");
+        console.log("Configuring Azure blob storage...");
         await useAzureStorage(process.env.AZURE_CONNECTION_STRING);
       } else {
-        console.log("Azure blob storage not configured");
+        console.log("Azure blob storage not configured.");
+      }
+
+      if (
+        process.env.AWS_ACCESS_KEY_ID !== "" &&
+        process.env.AWS_SECRET_ACCESS_KEY !== ""
+      ) {
+        const region = process.env.AWS_REGION ?? "us-east-1";
+        const bucketName = process.env.AWS_BUCKET_NAME ?? "g-batstate-u-action";
+        console.log(
+          `Configuring AWS S3 (region: ${region}, bucket: ${bucketName})...`
+        );
+        await useAwsStorage(region, bucketName);
+      } else {
+        console.log("AWS S3 not configured.");
       }
 
       // init ftp storage
@@ -146,10 +175,14 @@ mongoose.connect(
         process.env.AZURE_CONNECTION_STRING === "" &&
         process.env.FTP_CONNECTION_STRING !== ""
       ) {
-        console.log("Using FTP for storage...");
+        console.log("Configuring FTP for storage...");
         await useFtpStorage(process.env.FTP_CONNECTION_STRING);
       } else {
-        console.log("Azure blob storage & FTP storage not configured.");
+        console.log("FTP storage not configured.");
+      }
+
+      if (!isUsingAzureStorage() && !isUsingAwsS3() && !isUsingFtpStorage()) {
+        console.log("Storage not configured");
         console.log("Using local cache.");
         console.warn(
           "Warning. This may be a problem for containerized deployments."

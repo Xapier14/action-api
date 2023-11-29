@@ -4,9 +4,10 @@ import { Router } from "express";
 // modules
 import {
   databaseError,
-  buildingAdded,
-  parameterOutOfRange,
   invalidParameter,
+  buildingNotFound,
+  inventoryItemAlreadyExists,
+  inventoryItemAdded,
 } from "../../../../modules/responseGenerator.js";
 import { getUserIdFromToken } from "../../../../modules/tokens.js";
 
@@ -19,56 +20,47 @@ const router = Router();
 router.post("/:building", async (req, res) => {
   const token = req.headers.authorization;
   const userId = await getUserIdFromToken(token);
-  const building = req.params.building;
+  const buildingId = req.params.building;
 
   try {
     if (!req.body.name) return invalidParameter(res, "name");
-    if (!req.body.location) return invalidParameter(res, "location");
-    if (req.body.maxCapacity === undefined)
-      return invalidParameter(res, "maxCapacity");
-    if (!req.body.address) return invalidParameter(res, "address");
-    if (!req.body.buildingMarshal)
-      return invalidParameter(res, "buildingMarshal");
-    if (req.body.storyAboveGround === undefined)
-      return invalidParameter(res, "storyAboveGround");
-    if (req.body.storyBelowGround === undefined)
-      return invalidParameter(res, "storyBelowGround");
-    if (!req.body.typeOfConstruction)
-      return invalidParameter(res, "typeOfConstruction");
-    if (!req.body.primaryOccupancy)
-      return invalidParameter(res, "primaryOccupancy");
-    if (isNaN(req.body.maxCapacity))
-      return invalidParameter(res, "maxCapacity");
-    if (isNaN(req.body.storyAboveGround))
-      return invalidParameter(res, "storyAboveGround");
-    if (isNaN(req.body.storyBelowGround))
-      return invalidParameter(res, "storyBelowGround");
+    if (!req.body.itemCode || req.body.itemCode == "")
+      return invalidParameter(res, "itemCode");
+    const itemName = req.body.name;
+    const itemCode = req.body.itemCode;
+    const itemDescription = req.body.description ?? "";
 
-    if (req.body.maxCapacity < 0 || req.body.maxCapacity > 1000000)
-      return parameterOutOfRange(res, "maxCapacity", 0, 100000);
-    if (req.body.storyAboveGround < 0 || req.body.storyAboveGround > 1000000)
-      return parameterOutOfRange(res, "storyAboveGround", 0, 1000000);
+    // get building
+    const building = await BuildingSchema.findOne({ _id: buildingId });
+    if (building === null) {
+      buildingNotFound(res, building);
+      return;
+    }
+    if (building.inventory == undefined) building.inventory = [];
 
-    const building = await BuildingSchema.create({
-      name: req.body.name,
-      location: req.body.location,
-      maxCapacity: Number(req.body.maxCapacity),
-      otherInformation: req.body.otherInformation ?? "-n/a-",
-      address: req.body.address,
-      buildingMarshal: req.body.buildingMarshal,
-      storyAboveGround: Number(req.body.storyAboveGround),
-      storyBelowGround: Number(req.body.storyBelowGround),
-      typeOfConstruction: req.body.typeOfConstruction,
-      primaryOccupancy: req.body.primaryOccupancy,
+    const itemsWithSameItemCode = building.inventory.filter(
+      (building) => building.itemCode == itemCode
+    );
+    if (itemsWithSameItemCode.length != 0) {
+      // item with item code exists
+      inventoryItemAlreadyExists(res, itemCode);
+      return;
+    }
+
+    building.inventory.push({
+      name: itemName,
+      itemCode: itemCode,
+      description: itemDescription,
     });
-    buildingAdded(res, building._id);
+    await building.save();
+    inventoryItemAdded(res, itemCode);
     logging.log(
       req.ip,
-      `Building ${building._id} added.`,
+      `Inventory item ${itemCode} added to ${buildingId}.`,
       token,
       "info",
       userId,
-      "addBuilding"
+      "addInventoryItem"
     );
   } catch (err) {
     databaseError(req, res, err);
@@ -80,7 +72,7 @@ router.post("/:building", async (req, res) => {
       userId,
       "addInventoryItem"
     );
-    logging.err("Building.Add", err);
+    logging.err("Building.InventoryAdd", err);
     return;
   }
 });
