@@ -46,6 +46,18 @@ const BuildingSchema = new Schema({
     default: "offices",
     required: true,
   },
+  // array of item objects
+  /*
+  {
+    name,
+    itemCode,
+    description,
+  }
+  */
+  inventory: {
+    type: Array,
+    default: [],
+  },
 });
 
 export default model("Building", BuildingSchema);

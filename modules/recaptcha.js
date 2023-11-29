@@ -8,7 +8,8 @@ export function useRecaptcha(siteKey, apiKey, projectId) {
   $siteKey = siteKey;
   $projectId = projectId;
   $apiKey = apiKey;
-  console.log("Using ReCaptcha...");
+  if (isUsingRecaptcha()) console.log("Using ReCaptcha...");
+  else console.log("Configuration is blank, not using ReCaptcha...");
 }
 export function isUsingRecaptcha() {
   return $siteKey !== "" && $apiKey !== "" && $projectId !== "";
@@ -45,13 +46,15 @@ async function createAssessment(token, action) {
 
 export async function verifyTokenAsync(token, action) {
   if (!isUsingRecaptcha()) {
-    return -1.0;
+    // bypass if not using recaptcha
+    return 1.69;
   }
   const response = await createAssessment(token, action);
 
   if (!response.tokenProperties?.valid == true) {
     console.log(
-      "Invalid token, reason: " + (response.tokenProperties?.invalidReason ?? "n/a")
+      "Invalid token, reason: " +
+        (response.tokenProperties?.invalidReason ?? "n/a")
     );
     return -2.0;
   }

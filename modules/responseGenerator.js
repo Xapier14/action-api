@@ -80,6 +80,20 @@ export function buildingNotFound(res, id) {
     buildingId: id,
   });
 }
+export function inventoryItemNotFound(res, itemCode) {
+  res.status(404).send({
+    status: "Inventory item not found.",
+    e: 14,
+    itemCode: itemCode,
+  });
+}
+export function inventoryItemAlreadyExists(res, itemCode) {
+  res.status(400).send({
+    status: "Item already exists.",
+    e: 15,
+    itemCode: itemCode,
+  });
+}
 export function accountNotFound(res, id) {
   res.status(404).send({
     status: "Account not found.",
@@ -353,6 +367,33 @@ export function buildingDeleted(res) {
   res.send({
     status: "Building deleted.",
     e: 0,
+  });
+}
+export function inventoryItemAdded(res, id) {
+  res.send({
+    status: "Inventory item added.",
+    e: 0,
+    itemId: id,
+  });
+}
+export function inventoryItemEdited(res, id) {
+  res.send({
+    status: "Inventory item edited.",
+    e: 0,
+    itemId: id,
+  });
+}
+export function inventoryItemDeleted(res) {
+  res.send({
+    status: "Inventory item deleted.",
+    e: 0,
+  });
+}
+export function listInventoryItems(res, items) {
+  res.send({
+    status: "Inventory items retrieved.",
+    e: 0,
+    items: items,
   });
 }
 export function accountDeleted(res) {

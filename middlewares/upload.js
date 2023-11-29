@@ -33,8 +33,12 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage: storage, fileFilter: fileFilter });
 
 function perFileHandler(file) {
+  console.log(file);
   // this function is called for each file upload
-  if (file == null) return true;
+  if (file == null) {
+    console.error("file is null");
+    return true;
+  }
 
   // handle file here, e.g.:
   // store into a remote database from local cache
@@ -45,6 +49,7 @@ export function uploadSingle(field) {
   return (req, res, next) => {
     middleware(req, res, (err) => {
       if (err || perFileHandler(req.file)) {
+        console.error("upload middleware error");
         console.error(err);
         invalidFileUpload(res);
         return;

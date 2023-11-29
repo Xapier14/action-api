@@ -57,6 +57,19 @@ router.post("/", async (req, res) => {
   try {
     const user = await UserSchema.findOne({ email: email });
 
+    if (user === null) {
+      badLogin(res);
+      logger.log(
+        req.ip,
+        `Bad login attempt (user not found by email). (email: ${email})`,
+        "",
+        "warn",
+        "",
+        "login"
+      );
+      return;
+    }
+
     // check if account is locked
     if (user.isLocked) {
       accountIsLocked(res);
@@ -72,7 +85,7 @@ router.post("/", async (req, res) => {
     }
 
     // no email OR password doesn't match
-    if (user === null || !(await bcrypt.compare(password, user.password))) {
+    if (!(await bcrypt.compare(password, user.password))) {
       badLogin(res);
       // increment failed login attempts
       if (user !== null) {
