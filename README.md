@@ -28,14 +28,28 @@ View it in action [here](https://action-web.pages.dev).
    Your `.env` file should look something like this:
 
    ```
+   # GENERAL
    DB_CONNECTION=mongodb://<hostname>:27017/action-api
    PORT=3000
-   AZURE_CONNECTION_STRING=<azure-string>
+   ROUTE_LOGGER=<true-or-false>
+   ENV_CONFIG=<config-discriptor>
+
+   # AZURE BLOB STORAGE
+   AZURE_CONNECTION_STRING=
+
+   # AWS S3 STORAGE
+   AWS_ACCESS_KEY_ID=
+   AWS_SECRET_ACCESS_KEY=
+   AWS_REGION=
+   AWS_BUCKET_NAME=
+
+   # FTP STORAGE
+   FTP_CONNECTION_STRING=ftp://username:password@host:port
+
+   # GOOGLE RECAPTCHA ENTERPRISE
    GOOGLE_CLOUD_PROJECT_ID=<gcloud-project-id>
    GOOGLE_CLOUD_API_KEY=<gcloud-api-key>
    RECAPTCHA_SITE_KEY=<gcloud-enterprise-site-key>
-   ROUTE_LOGGER=<true-or-false>
-   ENV_CONFIG=<config-discriptor>
    ```
 
    > **Note:**
@@ -60,7 +74,6 @@ View it in action [here](https://action-web.pages.dev).
    - [Git](https://git-scm.com/)
    - [Node.js](https://nodejs.org/en/)
    - [MongoDB](https://www.mongodb.com/)
-   - [Azurite](https://github.com/azure/azurite) (Optional for testing only, not needed and should not be used for production.)
    - [FFMPEG](https://ffmpeg.org/download.html) (Should either be in your PATH or in the root directory of the project.)
 1. Clone the repository.
    ```
@@ -83,18 +96,32 @@ View it in action [here](https://action-web.pages.dev).
    Your `.env` file should look something like this:
 
    ```
+   # GENERAL
    DB_CONNECTION=mongodb://<hostname>:27017/action-api
-   PORT=80
-   AZURE_CONNECTION_STRING=<azure-string>
+   PORT=3000
+   ROUTE_LOGGER=<true-or-false>
+   ENV_CONFIG=<config-discriptor>
+
+   # AZURE BLOB STORAGE
+   AZURE_CONNECTION_STRING=
+
+   # AWS S3 STORAGE
+   AWS_ACCESS_KEY_ID=
+   AWS_SECRET_ACCESS_KEY=
+   AWS_REGION=
+   AWS_BUCKET_NAME=
+
+   # FTP STORAGE
+   FTP_CONNECTION_STRING=ftp://username:password@host:port
+
+   # GOOGLE RECAPTCHA ENTERPRISE
    GOOGLE_CLOUD_PROJECT_ID=<gcloud-project-id>
    GOOGLE_CLOUD_API_KEY=<gcloud-api-key>
    RECAPTCHA_SITE_KEY=<gcloud-enterprise-site-key>
-   ROUTE_LOGGER=<true-or-false>
-   ENV_CONFIG=<config-discriptor>
    ```
 
    > **Note:**
-   > The Google Cloud Project ID is required, not the project name.
+   > The Google Cloud Project ID is required if using ReCaptcha, not the project name.
    > If you are using MongoDB Atlas, just paste the connection string from your dashboard and append '/action-api' to specify the database.
    > If you do not have an Azure subscription to use Azure Blob Storage or have not installed Azurite (Azure emulator), leave the field blank to fallback to local storage.
 
