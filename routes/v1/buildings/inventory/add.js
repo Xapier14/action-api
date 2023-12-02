@@ -23,11 +23,12 @@ router.post("/:building", async (req, res) => {
   const buildingId = req.params.building;
 
   try {
-    if (!req.body.name) return invalidParameter(res, "name");
+    if (!req.body.name || req.body.name == "")
+      return invalidParameter(res, "name");
     if (!req.body.itemCode || req.body.itemCode == "")
       return invalidParameter(res, "itemCode");
     const itemName = req.body.name;
-    const itemCode = req.body.itemCode;
+    const itemCode = req.body.itemCode.toLowerCase();
     const itemDescription = req.body.description ?? "";
 
     // get building

@@ -23,11 +23,11 @@ router.post("/:building/:itemCode", async (req, res) => {
   const userId = await getUserIdFromToken(token);
   const buildingId = req.params.building;
   const itemCode = req.params.itemCode;
-  console.log("asdasd");
 
   try {
-    const itemName = req.body.name;
-    const itemDescription = req.body.description;
+    let itemName = req.body.name;
+    let itemDescription = req.body.description;
+    if (itemName == "") itemName = undefined;
 
     // get building
     const building = await BuildingSchema.findOne({ _id: buildingId });

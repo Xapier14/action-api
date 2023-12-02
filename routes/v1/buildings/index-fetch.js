@@ -73,6 +73,7 @@ router.get("/:id", async (req, res) => {
         storyBelowGround: building.storyBelowGround,
         typeOfConstruction: building.typeOfConstruction,
         primaryOccupancy: building.primaryOccupancy,
+        inventoryCount: building.inventory?.length ?? 0,
         lastStatus: lastStatus,
         lastInspection: lastInspection,
         lastIncidentId: incident.id,
@@ -90,6 +91,7 @@ router.get("/:id", async (req, res) => {
         storyBelowGround: building.storyBelowGround,
         typeOfConstruction: building.typeOfConstruction,
         primaryOccupancy: building.primaryOccupancy,
+        inventoryCount: building.inventory?.length ?? 0,
       });
     }
   } catch {

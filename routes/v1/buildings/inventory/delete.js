@@ -21,7 +21,7 @@ router.delete("/:building/:itemCode", async (req, res) => {
   const token = req.headers.authorization;
   const userId = await getUserIdFromToken(token);
   const buildingId = req.params.building;
-  const itemCode = req.params.itemCode;
+  const itemCode = req.params.itemCode.toLowerCase();
 
   try {
     // get building

@@ -44,7 +44,7 @@ router.get("/:building", async (req, res) => {
     databaseError(req, res, err);
     logging.log(
       req.ip,
-      `Building ${building._id} failed to list items in inventory.`,
+      `Building ${buildingId} failed to list items in inventory.`,
       token,
       "error",
       userId,

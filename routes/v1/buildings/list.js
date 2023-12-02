@@ -64,6 +64,7 @@ router.get("/", async (req, res) => {
           storyBelowGround: building.storyBelowGround,
           typeOfConstruction: building.typeOfConstruction,
           primaryOccupancy: building.primaryOccupancy,
+          inventoryCount: building.inventory?.length ?? 0,
         };
       })
     );
