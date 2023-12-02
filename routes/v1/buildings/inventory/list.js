@@ -4,10 +4,7 @@ import { Router } from "express";
 // modules
 import {
   databaseError,
-  invalidParameter,
   buildingNotFound,
-  inventoryItemAlreadyExists,
-  inventoryItemAdded,
   listInventoryItems,
 } from "../../../../modules/responseGenerator.js";
 import { getUserIdFromToken } from "../../../../modules/tokens.js";
