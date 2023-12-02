@@ -37,7 +37,7 @@ router.get("/:building", async (req, res) => {
     listInventoryItems(res, building.inventory);
     logging.log(
       req.ip,
-      `Retreived inventory items from ${buildingId}.`,
+      `Retrieved inventory items from ${buildingId}.`,
       token,
       "info",
       userId,
