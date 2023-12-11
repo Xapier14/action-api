@@ -29,12 +29,18 @@ import {
 } from "../../modules/responseGenerator.js";
 import { createSession } from "../../modules/tokens.js";
 import { isUsingRecaptcha, verifyTokenAsync } from "../../modules/recaptcha.js";
+import {
+  requireLicenseValid,
+  requireLicensePresent,
+} from "../../middlewares/licensing.js";
 
 // models
 import UserSchema from "../../models/user.js";
 
 const router = Router();
 
+router.use(requireLicensePresent);
+router.use(requireLicenseValid);
 router.use(fields(["email", "password", "g-recaptcha-token"]));
 router.post("/", async (req, res) => {
   // get email and password fields

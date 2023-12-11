@@ -1,7 +1,7 @@
 # Project ACTION
 
 The backend service for a proposed companion service to be used by The BatStateU ACTION Center.
-View it in action [here](https://action-web.pages.dev).
+View it in action [here](https://action.xapier.me).
 
 ## Getting Started
 
@@ -32,7 +32,8 @@ View it in action [here](https://action-web.pages.dev).
    DB_CONNECTION=mongodb://<hostname>:27017/action-api
    PORT=3000
    ROUTE_LOGGER=<true-or-false>
-   ENV_CONFIG=<config-discriptor>
+   ENV_CONFIG=<config-descriptor>
+   LICENSE=<license-hash>
 
    # AZURE BLOB STORAGE
    AZURE_CONNECTION_STRING=
@@ -56,6 +57,7 @@ View it in action [here](https://action-web.pages.dev).
    > The Google Cloud Project ID is required, not the project name.
    > If you are using MongoDB Atlas, just paste the connection string from your dashboard and append '/action-api' to specify the database.
    > If you do not have an Azure subscription to use Azure Blob Storage or have not installed Azurite (Azure emulator), leave the field blank to fallback to local storage. (Not recommended for production, files will be deleted when the container is removed.)
+   > A valid license is required to use this software.
 
 1. Run the image with the env file.
 
@@ -100,7 +102,8 @@ View it in action [here](https://action-web.pages.dev).
    DB_CONNECTION=mongodb://<hostname>:27017/action-api
    PORT=3000
    ROUTE_LOGGER=<true-or-false>
-   ENV_CONFIG=<config-discriptor>
+   ENV_CONFIG=<config-descriptor>
+   LICENSE=<license-hash>
 
    # AZURE BLOB STORAGE
    AZURE_CONNECTION_STRING=
@@ -123,7 +126,7 @@ View it in action [here](https://action-web.pages.dev).
    > **Note:**
    > The Google Cloud Project ID is required if using ReCaptcha, not the project name.
    > If you are using MongoDB Atlas, just paste the connection string from your dashboard and append '/action-api' to specify the database.
-   > If you do not have an Azure subscription to use Azure Blob Storage or have not installed Azurite (Azure emulator), leave the field blank to fallback to local storage.
+   > A valid license is required to use this software.
 
 1. Run the `start` script.
    ```
@@ -171,4 +174,4 @@ View it in action [here](https://action-web.pages.dev).
 
 ## License
 
-None yet. Please do not distribute until a license is decided upon.
+Software is licensed under the MIT license. Please include the unaltered LICENSE.md file in all copies of the software whether unmodified or a derivation.

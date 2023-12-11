@@ -14,6 +14,7 @@ import buildings from "./v1/buildings.js";
 import accounts from "./v1/accounts.js";
 import misc from "./v1/misc.js";
 import logs from "./v1/logs.js";
+import integrity from "./v1/misc/ensureIntegrity.js";
 
 const router = Router();
 
@@ -28,6 +29,7 @@ router.use("/attachments", attachments);
 router.use("/buildings", buildings);
 router.use("/accounts", accounts);
 router.use("/misc", misc);
+router.use("/integrity", integrity);
 router.use("/logs", logs);
 
 export default router;

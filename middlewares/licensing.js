@@ -1,7 +1,11 @@
 /*
- * ffmpeg.js - Service Module
+ * licensing.js - Express.js middleware
  *
- * Contains functions to interact with ffmpeg.
+ * Checks if the license token is valid.
+ *
+ * Needs the 'License-Token' header to be set.
+ *
+ * Requires 'responseGenerator.js' and 'license.js'.
  *
  * Copyright © 2023 Lance Crisang (Xapier14)
  *
@@ -24,22 +28,27 @@
  * SOFTWARE.
  */
 
-import { promisify } from "util";
-import { exec } from "child_process";
+import { unauthorized } from "../modules/responseGenerator.js";
+import { checkLicenseValid } from "../modules/license.js";
 
-const execP = promisify(exec);
-
-export async function getFFMPEGVersion() {
-  const { stdout } = await execP("ffmpeg -version");
-  const lines = stdout.split(" ");
-  return lines[2];
+export function requireLicensePresent(req, res, next) {
+  const licenseToken = req.headers["license-token"];
+  if (!licenseToken) {
+    console.log("license token not present");
+    unauthorized(res);
+    return;
+  }
+  next();
 }
 
-export async function generateThumbnail(sourceFile, destinationFile, width) {
-  const result = await execP(
-    `ffmpeg -i "${sourceFile}" -ss 00:00:00.000 -vframes 1 -vf scale=${width}:-2 "${destinationFile}"`
-  );
-  if (result.code != undefined && result.code !== 0) {
-    throw new Error(`FFMPEG exited with code ${result.code}`);
+export function requireLicenseValid(req, res, next) {
+  const licenseToken = req.headers["license-token"];
+
+  if (!checkLicenseValid(licenseToken)) {
+    console.log("license token not valid")
+    unauthorized(res);
+    return;
   }
+
+  next();
 }

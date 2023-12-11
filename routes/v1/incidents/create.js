@@ -15,6 +15,10 @@ import {
 import { getLocationFromToken } from "../../../modules/tokens.js";
 import logger from "../../../modules/logging.js";
 import { getUserIdFromToken } from "../../../modules/tokens.js";
+import {
+  requireLicenseValid,
+  requireLicensePresent,
+} from "../../../middlewares/licensing.js";
 
 // models
 import AttachmentSchema from "../../../models/attachment.js";
@@ -25,6 +29,8 @@ import logging from "../../../modules/logging.js";
 
 const router = Router();
 
+router.use(requireLicensePresent);
+router.use(requireLicenseValid);
 router.use("/", fields(getRequiredFieldsForReport()));
 router.post("/", async (req, res) => {
   const token = req.headers.authorization;

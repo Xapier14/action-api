@@ -1,7 +1,5 @@
 /*
- * ffmpeg.js - Service Module
- *
- * Contains functions to interact with ffmpeg.
+ * license.js - Service module
  *
  * Copyright © 2023 Lance Crisang (Xapier14)
  *
@@ -24,22 +22,11 @@
  * SOFTWARE.
  */
 
-import { promisify } from "util";
-import { exec } from "child_process";
+import bcrypt from "bcrypt";
 
-const execP = promisify(exec);
-
-export async function getFFMPEGVersion() {
-  const { stdout } = await execP("ffmpeg -version");
-  const lines = stdout.split(" ");
-  return lines[2];
-}
-
-export async function generateThumbnail(sourceFile, destinationFile, width) {
-  const result = await execP(
-    `ffmpeg -i "${sourceFile}" -ss 00:00:00.000 -vframes 1 -vf scale=${width}:-2 "${destinationFile}"`
-  );
-  if (result.code != undefined && result.code !== 0) {
-    throw new Error(`FFMPEG exited with code ${result.code}`);
-  }
+export function checkLicenseValid(license) {
+  const licenseHash = process.env.LICENSE;
+  const buffer = Buffer.from(licenseHash, "base64");
+  const bufferCompare = buffer.toString("utf-8");
+  return bcrypt.compareSync(license, bufferCompare);
 }

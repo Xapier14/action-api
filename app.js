@@ -92,6 +92,11 @@ const siteKey = process.env.RECAPTCHA_SITE_KEY ?? "";
 const apiKey = process.env.GOOGLE_CLOUD_API_KEY ?? "";
 const googleCloudProjectId = process.env.GOOGLE_CLOUD_PROJECT_ID ?? "";
 
+if (process.env.LICENSE === undefined || process.env.LICENSE === "") {
+  console.log("Software is not licensed.");
+  process.exit(1);
+}
+
 mongoose.set("strictQuery", false);
 mongoose.connect(
   process.env.DB_CONNECTION,
@@ -149,7 +154,10 @@ mongoose.connect(
       );
 
       // init azure storage
-      if (process.env.AZURE_CONNECTION_STRING !== "") {
+      if (
+        process.env.AZURE_CONNECTION_STRING !== undefined &&
+        process.env.AZURE_CONNECTION_STRING !== ""
+      ) {
         console.log("Configuring Azure blob storage...");
         await useAzureStorage(process.env.AZURE_CONNECTION_STRING);
       } else {
@@ -157,7 +165,9 @@ mongoose.connect(
       }
 
       if (
+        process.env.AWS_ACCESS_KEY_ID !== undefined &&
         process.env.AWS_ACCESS_KEY_ID !== "" &&
+        process.env.AWS_SECRET_ACCESS_KEY !== undefined &&
         process.env.AWS_SECRET_ACCESS_KEY !== ""
       ) {
         const region = process.env.AWS_REGION ?? "us-east-1";
@@ -172,7 +182,12 @@ mongoose.connect(
 
       // init ftp storage
       if (
-        process.env.AZURE_CONNECTION_STRING === "" &&
+        (process.env.AZURE_CONNECTION_STRING === undefined ||
+          process.env.AZURE_CONNECTION_STRING === "") &&
+        (process.env.AWS_ACCESS_KEY_ID === undefined ||
+          process.env.AWS_ACCESS_KEY_ID === "") &&
+        (process.env.AWS_SECRET_ACCESS_KEY === undefined ||
+          process.env.AWS_SECRET_ACCESS_KEY === "") &&
         process.env.FTP_CONNECTION_STRING !== ""
       ) {
         console.log("Configuring FTP for storage...");

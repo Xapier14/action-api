@@ -22,6 +22,10 @@ import { checkMimeType } from "../../../modules/typeCheck.js";
 import { saveAttachment } from "../../../modules/attachment.js";
 import { getUserIdFromToken } from "../../../modules/tokens.js";
 import { generateThumbnail } from "../../../modules/ffmpeg.js";
+import {
+  requireLicenseValid,
+  requireLicensePresent,
+} from "../../../middlewares/licensing.js";
 
 // models
 import AttachmentSchema from "../../../models/attachment.js";
@@ -31,6 +35,8 @@ import logging from "../../../modules/logging.js";
 
 const router = Router();
 
+router.use(requireLicensePresent);
+router.use(requireLicenseValid);
 router.post("/", uploadSingle("file"), async (req, res) => {
   const token = req.headers.authorization;
 
